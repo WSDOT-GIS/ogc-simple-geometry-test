@@ -38,6 +38,7 @@
 	}
 
 	function toOgcMultipoint(esriMultipoint) {
+		/// <summary>Converts and esri.geometry.Multipoint into an OgcSimpleGeometry</summary>
 		var output = "MULTIPOINT(";
 		dojo.forEach(esriMultipoint.points, function (point, index) {
 			if (index > 0) {
@@ -51,7 +52,7 @@
 
 	function OgcSimpleGeometry(g, wkid) {
 		/// <summary>A class representing an Open-Geospatial Consortium (OGC) Simple Geometry.</summary>
-		/// <param name="g" type="String">
+		/// <param name="g" type="String|esri.geometry.Geometry">
 		/// Either a simple geometry definition string or a JSON object containing a WKT string and spatial reference WKID.
 		/// </param>
 		/// <param name="wkid" type="Number">
@@ -72,11 +73,11 @@
 			} else if (g.type === "polygon" || g.rings) {
 				this.wkt = "POLYGON" + ringsOrPathsToOgc(g.rings);
 			} else if (g.type === "extent" || (g.xmin !== undefined && g.ymin !== undefined && g.xmax !== undefined && g.ymax !== undefined)) {
-				this.wkt = dojo.string.substitute("POLYGON((${xmin} ${ymin}, ${xmin} ${ymax}, ${xmax} ${ymax}, ${xmax} ${ymin}, ${xmin} ${ymin}))", g);
+				this.wkt = "POLYGON" + ringsOrPathsToOgc([[g.xmin, g.ymin], [g.xmin, g.xmax], [g.xmax, g.ymax], [g.xmax, g.ymin], [g.xmin, g.ymin]]);
 			} else {
 				throw new Error("Unknown geometry type");
 			}
-			this.srid = Boolean(g.spatialReference) ? g.spatialReference.wkid : null;
+			this.srid = g.spatialReference !== null && g.spatialReference !== undefined ? g.spatialReference.wkid : null;
 		} else {
 			this.wkt = g.wkt || null;
 			this.srid = g.srid || null;
@@ -154,7 +155,7 @@
 			}
 		});
 	}
-	
+
 	dojo.addOnLoad(init);
 
 
