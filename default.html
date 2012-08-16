@@ -13,7 +13,9 @@
 		</style>
 	</head>
 	<body>
+		<label for="geometryTypeSelect">Select a geometry type</label>
 		<select id="geometryTypeSelect">
+			<option value="">Off</option>
 			<optgroup label="Point">
 				<option value="point">point</option>
 				<option value="multipoint">multipoint</option>
@@ -41,9 +43,9 @@
 			</optgroup>
 
 		</select>
-		<button id="drawButton" type="button">Begin Drawing</button>
+		<!-- <button id="drawButton" type="button">Begin Drawing</button> -->
 		<button id="clearButton" type="button">Clear Graphics</button>
 		<div id="map"></div>
-		<textarea id="textArea" rows="10" cols="80"></textarea>
+		<textarea id="textArea" rows="10" cols="80" readonly="readonly"></textarea>
 	</body>
 </html>

@@ -2,6 +2,9 @@
 /// <reference path="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.1compact"/>
 (function () {
 	"use strict";
+	
+	// Matches a SQL geometry definition
+	sqlDefRe = /geo(?:(?:metr)|(?:raph))y\:\:\w+\('([^']+)'(?:,\s*(\d+))?\)/gi
 
 	function ringsOrPathsToOgc(paths) {
 		var output = "";

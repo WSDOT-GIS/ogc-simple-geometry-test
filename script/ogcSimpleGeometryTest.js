@@ -54,10 +54,10 @@
 			// Set up the draw toolbar.
 			drawToolbar = new esri.toolbars.Draw(map);
 			
-			dojo.connect(dojo.byId("drawButton"), "onclick", function() {
-				var geometryType = dojo.byId("geometryTypeSelect").value;
-				drawToolbar.activate(geometryType);
-			});
+			// dojo.connect(dojo.byId("drawButton"), "onclick", function() {
+				// var geometryType = dojo.byId("geometryTypeSelect").value;
+				// drawToolbar.activate(geometryType);
+			// });
 			
 			dojo.connect(dojo.byId("clearButton"), "onclick", function() {
 				pointLayer.clear();
@@ -66,17 +66,27 @@
 				dojo.byId("textArea").value = "";
 			});
 			
-			dojo.connect(drawToolbar, "onDrawEnd", function(geometry) {
-				var graphic = new esri.Graphic(geometry);
-				if (geometry.type === "point" || geometry.type === "multipoint") {
-					pointLayer.add(graphic);
-				} else if (geometry.type === "polyline") {
-					polylineLayer.add(graphic);
-				} else if (geometry.type === "polygon" || geometry.type === "extent") {
-					polygonLayer.add(graphic);
+			dojo.connect(dojo.byId("geometryTypeSelect"), "onchange", function(evt) {
+				// "this" is the select element.
+				var geometryType = this.value;
+				if (geometryType !== null && geometryType !== "") {
+					drawToolbar.activate(geometryType);
 				} else {
-					if (console !== undefined) {
-						console.error("Unknown geometry type.");
+					drawToolbar.deactivate();
+					map.enableMapNavigation();
+				}
+			});
+			
+			dojo.connect(drawToolbar, "onDrawEnd", function(geometry) {
+				var graphic;
+				if (geometry) {
+					graphic = new esri.Graphic(geometry)
+					if (geometry.type === "point" || geometry.type === "multipoint") {
+						pointLayer.add(graphic);
+					} else if (geometry.type === "polyline") {
+						polylineLayer.add(graphic);
+					} else if (geometry.type === "polygon" || geometry.type === "extent") {
+						polygonLayer.add(graphic);
 					}
 				}
 			});
