@@ -14,25 +14,36 @@
 	</head>
 	<body>
 		<select id="geometryTypeSelect">
-			<option value="arrow">arrow</option>
-			<option value="circle">circle</option>
-			<option value="downarrow">downarrow</option>
-			<option value="ellipse">ellipse</option>
-			<option value="extent">extent</option>
-			<option value="freehandpolygon">freehandpolygon</option>
-			<option value="freehandpolyline">freehandpolyline</option>
-			<option value="leftarrow">leftarrow</option>
-			<option value="line">line</option>
-			<option value="multipoint">multipoint</option>
-			<option value="point">point</option>
-			<option value="polygon">polygon</option>
-			<option value="polyline">polyline</option>
-			<option value="rectangle">rectangle</option>
-			<option value="rightarrow">rightarrow</option>
-			<option value="triangle">triangle</option>
-			<option value="uparrow">uparrow</option>
+			<optgroup label="Point">
+				<option value="point">point</option>
+				<option value="multipoint">multipoint</option>
+			</optgroup>
+			<optgroup label="Polyline">
+				<option value="polyline">polyline</option>
+				<option value="line">line</option>
+				<option value="freehandpolyline">freehand polyline</option>
+			</optgroup>
+			<optgroup label="Polygon">
+				<option value="polygon">polygon</option>
+				<option value="rectangle">rectangle</option>
+				<option value="extent">extent</option>
+				<option value="freehandpolygon">freehand polygon</option>
+			</optgroup>
+			<optgroup label="Pretty useless polygons...">
+				<option value="triangle">triangle</option>
+				<option value="ellipse">ellipse</option>
+				<option value="circle">circle</option>
+				<option value="arrow">arrow</option>
+				<option value="downarrow">down arrow</option>
+				<option value="leftarrow">left arrow</option>
+				<option value="rightarrow">right arrow</option>
+				<option value="uparrow">up arrow</option>
+			</optgroup>
+
 		</select>
 		<button id="drawButton" type="button">Begin Drawing</button>
+		<button id="clearButton" type="button">Clear Graphics</button>
 		<div id="map"></div>
+		<textarea id="textArea" rows="10" cols="80"></textarea>
 	</body>
 </html>

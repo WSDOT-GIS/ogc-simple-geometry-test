@@ -44,6 +44,12 @@
 				drawToolbar.activate(geometryType);
 			});
 			
+			dojo.connect(dojo.byId("clearButton"), "onclick", function() {
+				pointLayer.clear();
+				polylineLayer.clear();
+				polygonLayer.clear();
+			});
+			
 			dojo.connect(drawToolbar, "onDrawEnd", function(geometry) {
 				var graphic = new esri.Graphic(geometry);
 				if (geometry.type === "point" || geometry.type === "multipoint") {
