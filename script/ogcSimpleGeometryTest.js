@@ -40,6 +40,7 @@
 		polylineLayer.setRenderer(new esri.renderer.SimpleRenderer(new esri.symbol.SimpleLineSymbol().setStyle("solid")));
 		polygonLayer.setRenderer(new esri.renderer.SimpleRenderer(new esri.symbol.SimpleFillSymbol().setStyle("solid")));
 		
+		// Add the graphics layers to the map and connect the layer event handlers.
 		(function(){
 			var layers = [pointLayer, polylineLayer, polygonLayer], i, l, layer;
 			
@@ -54,11 +55,7 @@
 			// Set up the draw toolbar.
 			drawToolbar = new esri.toolbars.Draw(map);
 			
-			// dojo.connect(dojo.byId("drawButton"), "onclick", function() {
-				// var geometryType = dojo.byId("geometryTypeSelect").value;
-				// drawToolbar.activate(geometryType);
-			// });
-			
+			// Setup the clear button to clear all graphics from the map and text from the text area.
 			dojo.connect(dojo.byId("clearButton"), "onclick", function() {
 				pointLayer.clear();
 				polylineLayer.clear();
@@ -66,6 +63,7 @@
 				dojo.byId("textArea").value = "";
 			});
 			
+			// Set the select box to activate or deactivate the draw toolbar depending on selection.
 			dojo.connect(dojo.byId("geometryTypeSelect"), "onchange", function(evt) {
 				// "this" is the select element.
 				var geometryType = this.value;
@@ -77,6 +75,7 @@
 				}
 			});
 			
+			// Add a graphic to the map when the user has finished drawing a geometry.
 			dojo.connect(drawToolbar, "onDrawEnd", function(geometry) {
 				var graphic;
 				if (geometry) {
