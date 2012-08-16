@@ -1,5 +1,5 @@
 /*global dojo,esri*/
-/// <reference path="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=2.5"/>
+/// <reference path="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.1compact"/>
 (function () {
 	"use strict";
 
@@ -142,15 +142,19 @@
 
 
 
-	dojo.declare("ogc.SimpleGeometry", null, {
-		constructor: OgcSimpleGeometry,
-		getSqlConstructor: function () {
-			return "geometry::STGeomFromText('" + this.wkt + "', " + this.srid + ")";
-		},
-		toEsriGeometry: function () {
-			return toEsriGeometry(this);
-		}
-	});
+	function init() {
+		dojo.declare("ogc.SimpleGeometry", null, {
+			constructor: OgcSimpleGeometry,
+			getSqlConstructor: function () {
+				return "geometry::STGeomFromText('" + this.wkt + "', " + this.srid + ")";
+			},
+			toEsriGeometry: function () {
+				return toEsriGeometry(this);
+			}
+		});
+	}
+	
+	dojo.addOnLoad(init);
 
 
 }());

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>OGC Simple Geometry Test</title>
+		<script src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.1compact"></script>
+		<script src="script/ogcSimpleGeometry.js"></script>
+		<script src="script/ogcSimpleGeometryTest.js"></script>
+		<style>
+			#map {
+				width: 640px;
+				height: 480px;
+			}
+		</style>
+	</head>
+	<body>
+		<select id="geometryTypeSelect">
+			<option value="arrow">arrow</option>
+			<option value="circle">circle</option>
+			<option value="downarrow">downarrow</option>
+			<option value="ellipse">ellipse</option>
+			<option value="extent">extent</option>
+			<option value="freehandpolygon">freehandpolygon</option>
+			<option value="freehandpolyline">freehandpolyline</option>
+			<option value="leftarrow">leftarrow</option>
+			<option value="line">line</option>
+			<option value="multipoint">multipoint</option>
+			<option value="point">point</option>
+			<option value="polygon">polygon</option>
+			<option value="polyline">polyline</option>
+			<option value="rectangle">rectangle</option>
+			<option value="rightarrow">rightarrow</option>
+			<option value="triangle">triangle</option>
+			<option value="uparrow">uparrow</option>
+		</select>
+		<button id="drawButton" type="button">Begin Drawing</button>
+		<div id="map"></div>
+	</body>
+</html>
