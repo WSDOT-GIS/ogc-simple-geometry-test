@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>OGC Simple Geometry Test</title>
+		<title>OGC Simple Geometry Demo</title>
 		<script src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.1compact"></script>
 		<script src="script/ogcSimpleGeometry.js"></script>
 		<script src="script/ogcSimpleGeometryTest.js"></script>
@@ -13,6 +13,7 @@
 		</style>
 	</head>
 	<body>
+		<p>This page demonstrates the ogcSimpleGeometry library.</p>
 		<label for="geometryTypeSelect">Select a geometry type</label>
 		<select id="geometryTypeSelect">
 			<option value="">Off</option>
@@ -43,7 +44,6 @@
 			</optgroup>
 
 		</select>
-		<!-- <button id="drawButton" type="button">Begin Drawing</button> -->
 		<button id="clearButton" type="button">Clear Graphics</button>
 		<div id="map"></div>
 		<textarea id="textArea" rows="10" cols="80" readonly="readonly"></textarea>
