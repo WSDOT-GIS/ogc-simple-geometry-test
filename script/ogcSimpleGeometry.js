@@ -46,6 +46,7 @@
 			output += String(point[0]) + " " + String(point[1]);
 		});
 		output += ")";
+		return output;
 	}
 
 	function OgcSimpleGeometry(g, wkid) {
@@ -61,16 +62,16 @@
 		if (typeof (g) === "string") {
 			this.wkt = g;
 			this.srid = Number(wkid);
-		} else if (typeof (g.spatialReference) !== "undefined" || (typeof (g.isInstanceOf) === "function" && g.isInstanceOf(esri.geometry.Geometry))) {
-			if (g.type === "point" || (typeof (g.x) !== "undefined" && typeof (g.y !== "undefined"))) {
+		} else if (g.spatialReference !== undefined || (g.isInstanceOf !== undefined && g.isInstanceOf(esri.geometry.Geometry))) {
+			if (g.type === "point" || (g.x !== undefined && g.y !== undefined)) {
 				this.wkt = "POINT(" + g.x + " " + g.y + ")";
 			} else if (g.type === "multipoint" || g.points) {
 				this.wkt = toOgcMultipoint(g);
-			} else if (g.type === "polyline" || g.rings) {
+			} else if (g.type === "polyline" || g.paths) {
 				this.wkt = "MULTILINESTRING" + ringsOrPathsToOgc(g.paths);
-			} else if (g.type === "polygon" || g.paths) {
+			} else if (g.type === "polygon" || g.rings) {
 				this.wkt = "POLYGON" + ringsOrPathsToOgc(g.rings);
-			} else if (g.type === "extent" || (typeof (g.xmin) !== "undefined" && typeof (g.ymin) !== "undefined" && typeof (g.xmax) !== "undefined" && typeof (g.ymax) !== "undefined")) {
+			} else if (g.type === "extent" || (g.xmin !== undefined && g.ymin !== undefined && g.xmax !== undefined && g.ymax !== undefined)) {
 				this.wkt = dojo.string.substitute("POLYGON((${xmin} ${ymin}, ${xmin} ${ymax}, ${xmax} ${ymax}, ${xmax} ${ymin}, ${xmin} ${ymin}))", g);
 			} else {
 				throw new Error("Unknown geometry type");
