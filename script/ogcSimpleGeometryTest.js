@@ -6,6 +6,16 @@
 	
 	var map, drawToolbar, pointLayer, polylineLayer, polygonLayer;
 	
+	function addGraphicToTextArea(graphic) {
+		var simpleGeometry, textArea;
+		textArea = dojo.byId("textArea");
+		simpleGeometry = ogc.SimpleGeometry(graphic.geometry);
+		if (textArea.value.length > 0) {
+			textArea.value += "\n";
+		}
+		textArea.value += simpleGeometry.getSqlConstructor();
+	}
+	
 	function init() {
 		var basemap;
 		
@@ -30,10 +40,15 @@
 		polylineLayer.setRenderer(new esri.renderer.SimpleRenderer(new esri.symbol.SimpleLineSymbol().setStyle("solid")));
 		polygonLayer.setRenderer(new esri.renderer.SimpleRenderer(new esri.symbol.SimpleFillSymbol().setStyle("solid")));
 		
-		
-		map.addLayer(pointLayer);
-		map.addLayer(polylineLayer);
-		map.addLayer(polygonLayer);
+		(function(){
+			var layers = [pointLayer, polylineLayer, polygonLayer], i, l, layer;
+			
+			for (i = 0, l = layers.length; i < l; i += 1) {
+				layer = layers[i];
+				map.addLayer(layer);
+				dojo.connect(layer, "onGraphicAdd", addGraphicToTextArea);
+			}
+		}());
 		
 		dojo.connect(map, "onLoad", function(map) {
 			// Set up the draw toolbar.
@@ -48,6 +63,7 @@
 				pointLayer.clear();
 				polylineLayer.clear();
 				polygonLayer.clear();
+				dojo.byId("textArea").value = "";
 			});
 			
 			dojo.connect(drawToolbar, "onDrawEnd", function(geometry) {
