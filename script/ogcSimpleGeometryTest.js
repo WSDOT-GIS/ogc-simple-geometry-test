@@ -51,6 +51,16 @@
 			}
 		}());
 		
+		dojo.connect(dojo.byId("saveButton"), "onclick", function() {
+			var text;
+			if (localStorage === undefined) {
+				alert("Your browser does not support this feature.");
+			} else {
+				text = dojo.byId("textArea").value;
+				localStorage.setItem("geometry", text);
+			}
+		});
+		
 		dojo.connect(map, "onLoad", function(map) {
 			// Set up the draw toolbar.
 			drawToolbar = new esri.toolbars.Draw(map);
@@ -71,7 +81,6 @@
 					drawToolbar.activate(geometryType);
 				} else {
 					drawToolbar.deactivate();
-					map.enableMapNavigation();
 				}
 			});
 			
