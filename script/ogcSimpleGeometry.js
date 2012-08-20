@@ -2,42 +2,49 @@
 /// <reference path="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.1compact"/>
 (function () {
 	"use strict";
-	
+
 	// Matches a SQL geometry definition
+	/*jslint regexp: true*/
 	var sqlDefRe = /geo(?:(?:metr)|(?:raph))y\:\:\w+\('([^']+)'(?:,\s*(\d+))?\)/gi;
+	/*jslint regexp: false*/
 
 	function ringsOrPathsToOgc(paths) {
-		var output = "";
-		dojo.forEach(paths, function (path, index) {
-			if (index > 0) {
-				output += ",";
+		var output = [], path, i, l, point, pi, pl, coord, ci, cl;
+
+		// Loop through the paths.
+		for (i = 0, l = paths.length; i < l; i += 1) {
+			path = paths[i];
+			if (i > 0) {
+				output.push(",");
 			} else {
-				output += "(";
+				output.push("(");
 			}
-			dojo.forEach(path, function (point, pIndex) {
-				if (pIndex > 0) {
-					output += ",";
+
+			// Loop through the points.
+			for (pi = 0, pl = path.length; pi < pl; pi += 1) {
+				point = path[pi];
+				if (pi > 0) {
+					output.push(",");
 				} else {
-					output += "(";
+					output.push("(");
 				}
 
-				dojo.forEach(point, function (coord, cIndex) {
-					if (cIndex > 0) {
-						output += " ";
+				// Loop through the coordinates of the point.
+				for (ci = 0, cl = point.length; ci < cl; ci += 1) {
+					coord = point[ci];
+					if (ci > 0) {
+						output.push(" ");
 					}
-					output += String(coord);
-				});
-
-				if (pIndex === path.length - 1) {
-					output += ")";
+					output.push(String(coord));
 				}
-			});
 
-			if (index === paths.length - 1) {
-				output += ")";
+				if (pi === path.length - 1) {
+					output.push(")");
+				}
 			}
-		});
-		return output;
+		}
+
+		return output.join("");
 	}
 
 	function toOgcMultipoint(esriMultipoint) {
@@ -61,7 +68,6 @@
 		/// <param name="wkid" type="Number">
 		/// If the first parameter is a string, then this parameter will be the spatial reference WKID.  Otherwise, this parameter will be ignored.
 		/// </param>
-
 
 		if (typeof (g) === "string") {
 			this.wkt = g;
@@ -145,13 +151,21 @@
 		return json;
 	}
 
-
+	function getSqlConstructor(ogcSimpleGeometry) {
+		var output = null;
+		if (ogcSimpleGeometry.srid !== undefined && ogcSimpleGeometry.srid !== null) {
+			output = "geometry::STGeomFromText('" + ogcSimpleGeometry.wkt + "', " + ogcSimpleGeometry.srid + ")";
+		} else {
+			output = "geometry::STGeomFromText('" + ogcSimpleGeometry.wkt + "')";
+		}
+		return output;
+	}
 
 	function init() {
 		dojo.declare("ogc.SimpleGeometry", null, {
 			constructor: OgcSimpleGeometry,
 			getSqlConstructor: function () {
-				return "geometry::STGeomFromText('" + this.wkt + "', " + this.srid + ")";
+				return getSqlConstructor(this);
 			},
 			toEsriGeometry: function () {
 				return toEsriGeometry(this);
@@ -160,6 +174,5 @@
 	}
 
 	dojo.addOnLoad(init);
-
 
 }());
