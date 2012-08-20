@@ -5,6 +5,11 @@
 
 
 
+	/**
+	 * Converts an array representing rings or paths (of a polygon or polyine) into OGC Simple Geometry string equivalent. 
+	 * @param {Array} An array containing arrays containing arrays of numbers. 
+	 * @returns {String} The string equivalent of the input array.  Note that the geometry type (e.g., "POLYGON") will not be included in this string.
+	 */
 	function ringsOrPathsToOgc(paths) {
 		var output = [], path, i, l, point, pi, pl, coord, ci, cl;
 
@@ -44,8 +49,12 @@
 		return output.join("");
 	}
 
+	/**
+	 * Converts and {@link esri.geometry.Multipoint} into an {@link OgcSimpleGeometry}
+	 * @param {esri.geometry.Multipoint}
+	 * @returns {OgcSimpleGeometry}
+	 */
 	function toOgcMultipoint(esriMultipoint) {
-		/// <summary>Converts and esri.geometry.Multipoint into an OgcSimpleGeometry</summary>
 		var output = "MULTIPOINT(";
 		dojo.forEach(esriMultipoint.points, function (point, index) {
 			if (index > 0) {
@@ -57,25 +66,28 @@
 		return output;
 	}
 
+	/**
+	 * A class representing an Open-Geospatial Consortium (OGC) Simple Geometry.
+	 * @param {string|esri.geometry.Geometry} g Either a simple geometry definition string or a JSON object containing a WKT string and spatial reference WKID.
+	 * @param {number} [wkid] If the g parameter does not include spatial reference information, you must include a spatial reference WKID here.
+	 * @property {string} wkt Well-Known Text (WKT) that defines an OGC Simple Geometry.
+	 * @property {number} srid The spatial reference identifier or Well-known identifier (WKID) representing a spatial reference.
+	 */
 	function OgcSimpleGeometry(g, wkid) {
-		/// <summary>A class representing an Open-Geospatial Consortium (OGC) Simple Geometry.</summary>
-		/// <param name="g" type="String|esri.geometry.Geometry">
-		/// Either a simple geometry definition string or a JSON object containing a WKT string and spatial reference WKID.
-		/// </param>
-		/// <param name="wkid" type="Number">
-		/// If the first parameter is a string, then this parameter will be the spatial reference WKID.  Otherwise, this parameter will be ignored.
-		/// </param>
-
 		// Matches a SQL geometry definition
 		/*jslint regexp: true*/
 		var sqlDefRe = /geo(?:(?:metr)|(?:raph))y\:\:\w+\('([^']+)'(?:,\s*(\d+))?\)/gi, match;
 		/*jslint regexp: false*/
 
 		if (typeof (g) === "string") {
+			// Try to parse the input string as a SQL geometry creation statement.
 			match = sqlDefRe.exec(g);
 			if (match) {
 				this.wkt = match[1];
-				this.srid = match.length > 2 ? Number(match[2]) : null;
+				// First try to use the SRID from the SQL statement.  
+				// If there is none, use the wkid parameter.
+				// If that is not provided, set the srid property to null.  
+				this.srid = match.length > 2 ? Number(match[2]) : wkid !== undefined && wkid !== null ? Number(wkid) : null;
 			} else {
 				this.wkt = g;
 				this.srid = Number(wkid);
@@ -100,7 +112,12 @@
 			this.srid = g.srid || null;
 		}
 	}
-
+	
+	/**
+	 * Converts an ogc.SimpleGeometry into an esri.geometry.Geometry.
+	 * @param {OgcSimpleGeometry} ogcSimpleGeometry An ogc.SimpleGeometry object.
+	 * @returns {esri.geometry.Geometry}
+	 */
 	function toEsriGeometry(ogcSimpleGeometry) {
 		/// <summary>Converts an ogc.SimpleGeometry into an esri.geometry.Geometry.</summary>
 		/// <param name="ogcSimpleGeometry" type="ogc.SimpleGeometry">An ogc.SimpleGeometry object.</param>
