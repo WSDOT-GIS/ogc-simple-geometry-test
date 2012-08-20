@@ -57,7 +57,12 @@
 				alert("Your browser does not support this feature.");
 			} else {
 				text = dojo.byId("textArea").value;
-				localStorage.setItem("geometry", text);
+				if (text.length > 0) {
+					localStorage.setItem("geometry", text);
+				} else {
+					localStorage.removeItem("geometry");
+				}
+				
 			}
 		});
 		

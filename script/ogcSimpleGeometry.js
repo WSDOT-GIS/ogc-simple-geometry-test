@@ -76,7 +76,7 @@
 			} else if (g.type === "polygon" || g.rings) {
 				this.wkt = "POLYGON" + ringsOrPathsToOgc(g.rings);
 			} else if (g.type === "extent" || (g.xmin !== undefined && g.ymin !== undefined && g.xmax !== undefined && g.ymax !== undefined)) {
-				this.wkt = "POLYGON" + ringsOrPathsToOgc([[g.xmin, g.ymin], [g.xmin, g.xmax], [g.xmax, g.ymax], [g.xmax, g.ymin], [g.xmin, g.ymin]]);
+				this.wkt = "POLYGON" + ringsOrPathsToOgc([[[g.xmin, g.ymin], [g.xmin, g.xmax], [g.xmax, g.ymax], [g.xmax, g.ymin], [g.xmin, g.ymin]]]);
 			} else {
 				throw new Error("Unknown geometry type");
 			}
