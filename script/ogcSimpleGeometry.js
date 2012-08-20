@@ -3,10 +3,7 @@
 (function () {
 	"use strict";
 
-	// Matches a SQL geometry definition
-	/*jslint regexp: true*/
-	var sqlDefRe = /geo(?:(?:metr)|(?:raph))y\:\:\w+\('([^']+)'(?:,\s*(\d+))?\)/gi;
-	/*jslint regexp: false*/
+
 
 	function ringsOrPathsToOgc(paths) {
 		var output = [], path, i, l, point, pi, pl, coord, ci, cl;
@@ -69,9 +66,20 @@
 		/// If the first parameter is a string, then this parameter will be the spatial reference WKID.  Otherwise, this parameter will be ignored.
 		/// </param>
 
+		// Matches a SQL geometry definition
+		/*jslint regexp: true*/
+		var sqlDefRe = /geo(?:(?:metr)|(?:raph))y\:\:\w+\('([^']+)'(?:,\s*(\d+))?\)/gi, match;
+		/*jslint regexp: false*/
+
 		if (typeof (g) === "string") {
-			this.wkt = g;
-			this.srid = Number(wkid);
+			match = sqlDefRe.exec(g);
+			if (match) {
+				this.wkt = match[1];
+				this.srid = match.length > 2 ? Number(match[2]) : null;
+			} else {
+				this.wkt = g;
+				this.srid = Number(wkid);
+			}
 		} else if (g.spatialReference !== undefined || (g.isInstanceOf !== undefined && g.isInstanceOf(esri.geometry.Geometry))) {
 			if (g.type === "point" || (g.x !== undefined && g.y !== undefined)) {
 				this.wkt = "POINT(" + g.x + " " + g.y + ")";
