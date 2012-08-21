@@ -1,9 +1,7 @@
-/*global dojo,esri*/
-/// <reference path="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.1compact"/>
-(function () {
+/*global define,dojo,esri*/
+/// <reference path="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.1compact"/>"
+define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 	"use strict";
-
-
 
 	/**
 	 * Converts an array representing rings or paths (of a polygon or polyine) into OGC Simple Geometry string equivalent. 
@@ -113,7 +111,7 @@
 			this.srid = g.srid || null;
 		}
 	}
-	
+
 	/**
 	 * Converts an ogc.SimpleGeometry into an esri.geometry.Geometry.
 	 * @param {OgcSimpleGeometry} ogcSimpleGeometry An ogc.SimpleGeometry object.
@@ -187,18 +185,14 @@
 		return output;
 	}
 
-	function init() {
-		dojo.declare("ogc.SimpleGeometry", null, {
-			constructor: OgcSimpleGeometry,
-			getSqlConstructor: function () {
-				return getSqlConstructor(this);
-			},
-			toEsriGeometry: function () {
-				return toEsriGeometry(this);
-			}
-		});
-	}
+	return declare("ogc.SimpleGeometry", null, {
+		constructor: OgcSimpleGeometry,
+		getSqlConstructor: function () {
+			return getSqlConstructor(this);
+		},
+		toEsriGeometry: function () {
+			return toEsriGeometry(this);
+		}
+	});
 
-	dojo.addOnLoad(init);
-
-}());
+});
