@@ -11,7 +11,7 @@ Licensed under [The MIT License](http://opensource.org/licenses/MIT).
 
 ## Files ##
 
-### `ogcSimpleGeometry.js` ###
+### `ogc/SimpleGeometry.js` ###
 This file defines the ogc.SimpleGeometry class.
 
 ### `ogcSimpleGeometry.vsdoc.js` ###
