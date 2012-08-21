@@ -98,6 +98,7 @@
 			} else if (g.type === "multipoint" || g.points) {
 				this.wkt = toOgcMultipoint(g);
 			} else if (g.type === "polyline" || g.paths) {
+				// TODO: Detect if output could be LINESTRING.
 				this.wkt = "MULTILINESTRING" + ringsOrPathsToOgc(g.paths);
 			} else if (g.type === "polygon" || g.rings) {
 				this.wkt = "POLYGON" + ringsOrPathsToOgc(g.rings);

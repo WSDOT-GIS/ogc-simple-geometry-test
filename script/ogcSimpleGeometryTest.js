@@ -1,3 +1,5 @@
+/*global dojo, ogc, esri*/
+/*jslint white: true, browser: true */
 (function(){
 	"use strict";
 	
@@ -17,12 +19,14 @@
 	}
 	
 	function init() {
-		var basemap;
+		var basemap, infoTemplate;
 		
 		// Set up the map.
 		map = new esri.Map("map");
 		basemap = new esri.layers.ArcGISTiledMapServiceLayer("http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer");
 		map.addLayer(basemap);
+		
+		infoTemplate = new esri.InfoTemplate("Attributes", "${*}");
 		
 		// Setup graphics layers for the various geometry types.
 		pointLayer = new esri.layers.GraphicsLayer({
@@ -46,6 +50,7 @@
 			
 			for (i = 0, l = layers.length; i < l; i += 1) {
 				layer = layers[i];
+				layer.setInfoTemplate(infoTemplate);
 				map.addLayer(layer);
 				dojo.connect(layer, "onGraphicAdd", addGraphicToTextArea);
 			}
@@ -54,7 +59,7 @@
 		dojo.connect(dojo.byId("saveButton"), "onclick", function() {
 			var text;
 			if (localStorage === undefined) {
-				alert("Your browser does not support this feature.");
+				window.alert("Your browser does not support this feature.");
 			} else {
 				text = dojo.byId("textArea").value;
 				if (text.length > 0) {
@@ -63,6 +68,19 @@
 					localStorage.removeItem("geometry");
 				}
 				
+			}
+		});
+		
+		// Setup event handler to style the textarea differently if there is an invalid JSON string in the box.
+		dojo.connect(dojo.byId("attributesTextArea"), "onkeyup", function() {
+			var textArea = this, attributes = null;
+			try {
+				if (textArea.value.length > 0) {
+					attributes = JSON.parse(textArea.value);
+				}
+				dojo.removeClass(textArea, "error");
+			} catch (SyntaxError) {
+				dojo.addClass(textArea, "error");
 			}
 		});
 		
@@ -79,21 +97,40 @@
 			});
 			
 			// Set the select box to activate or deactivate the draw toolbar depending on selection.
-			dojo.connect(dojo.byId("geometryTypeSelect"), "onchange", function(evt) {
+			dojo.connect(dojo.byId("geometryTypeSelect"), "onchange", function() {
 				// "this" is the select element.
 				var geometryType = this.value;
 				if (geometryType !== null && geometryType !== "") {
+					pointLayer.disableMouseEvents();
+					polylineLayer.disableMouseEvents();
+					polygonLayer.disableMouseEvents();
 					drawToolbar.activate(geometryType);
 				} else {
+					pointLayer.enableMouseEvents();
+					polylineLayer.enableMouseEvents();
+					polygonLayer.enableMouseEvents();
 					drawToolbar.deactivate();
 				}
 			});
 			
 			// Add a graphic to the map when the user has finished drawing a geometry.
 			dojo.connect(drawToolbar, "onDrawEnd", function(geometry) {
-				var graphic;
+				var graphic, attributes, jsonText;
 				if (geometry) {
-					graphic = new esri.Graphic(geometry)
+					graphic = new esri.Graphic(geometry);
+					try {
+						jsonText = dojo.byId("attributesTextArea").value;
+						if (jsonText) {
+							attributes = JSON.parse(jsonText);
+							graphic.setAttributes(attributes);
+						}
+					} catch (SyntaxError) {
+						/*jslint devel: true */
+						if (console) {
+							console.warn("Invalid attributes JSON was specified.");
+						}
+						/*jslint devel: false */
+					}
 					if (geometry.type === "point" || geometry.type === "multipoint") {
 						pointLayer.add(graphic);
 					} else if (geometry.type === "polyline") {
@@ -103,7 +140,7 @@
 					}
 				}
 			});
-		})
+		});
 		
 
 	}

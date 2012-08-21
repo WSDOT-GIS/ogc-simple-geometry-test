@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<title>OGC Simple Geometry Demo</title>
+		<link rel="stylesheet" href="style/default.css" />
 		<script src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.1compact"></script>
 		<script src="script/ogcSimpleGeometry.js"></script>
 		<script src="script/ogcSimpleGeometryTest.js"></script>
@@ -47,8 +48,11 @@
 		<button id="clearButton" type="button">Clear Graphics</button>
 		<!-- The map control will be placed in this div. -->
 		<div id="map"></div>
+		<label for="attributesTextArea">Attributes</label><br />
+		<textarea id="attributesTextArea" rows="10" cols="40" placeholder="Enter a valid JSON object definition."></textarea><br />
 		<!-- This box will have SQL geometry strings added as graphics are added to the map. -->
-		<textarea id="textArea" rows="10" cols="80" readonly="readonly"></textarea>
-		<button id="saveButton" type="button" title="Saves the current graphics into local storage.">Save</button>
+		<label for="textArea">SQL</label><br />
+		<textarea id="textArea" rows="10" cols="80" readonly="readonly" placeholder="SQL statements will appear here."></textarea>
+		<button id="saveButton" type="button" title="Saves the current graphics into local storage." style="display: none">Save</button>
 	</body>
 </html>
