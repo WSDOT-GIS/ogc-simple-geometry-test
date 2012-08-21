@@ -10,10 +10,71 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 			var simpleGeometry, textArea;
 			textArea = dom.byId("textArea");
 			simpleGeometry = ogc.SimpleGeometry(graphic.geometry);
-			if (textArea.value.length > 0) {
-				textArea.value += "\n";
+		}
+		
+		/**
+		 * Saves a graphic to the localStorage "graphics" item. 
+ 		 * @param {esri.Graphic} graphic
+		 */
+		function saveGraphicToLocalStorage(graphic) {
+			var graphics;
+			if (localStorage !== undefined) {
+				if (localStorage.graphics) {
+					graphics = JSON.parse(localStorage.graphics);
+				} else {
+					graphics = [];
+				}
+				
+				graphics.push(graphic.toJson());
+				
+				localStorage.setItem("graphics", JSON.stringify(graphics));
 			}
-			textArea.value += simpleGeometry.getSqlConstructor();
+		}
+		
+		/**
+		 * Removes the localStorage.graphics item. 
+		 */
+		function clearGraphicsFromLocalStorage() {
+			if (localStorage !== undefined && localStorage.graphics) {
+				localStorage.removeItem("graphics");
+			}
+		}
+		
+		/**
+		 * Loads the graphics from local storage and adds them to the appropriate graphics layers. 
+		 */
+		function loadGraphicsFromLocalStorage() {
+			var graphics, graphic, i, l, layer, pointRe = /point$/i, polygonRe = /^(?:(?:polygon)|(?:extent))$/i, polylineRe = /line$/i;
+			if (localStorage !== undefined && pointLayer.loaded && polygonLayer.loaded && polylineLayer.loaded) {
+				
+				// Get previously saved graphics.  If available this will be a JSON representation of array of objects.
+				graphics = localStorage.getItem("graphics");
+				if (graphics !== null && graphics !== undefined) {
+					graphics = JSON.parse(graphics);
+					
+					// Loop through all of the objects in the "graphics" array.
+					for (i = 0, l = graphics.length; i < l; i += 1) {
+						try {
+							graphic = graphics[i];
+							graphic = new esri.Graphic(graphic);
+							if (pointRe.test(graphic.geometry.type)) {
+								pointLayer.add(graphic);
+							} else if (polygonRe.test(graphic.geometry.type)) {
+								polygonLayer.add(graphic);
+							} else if (polylineRe.test(graphic.geometry.type)) {
+								polylineLayer.add(graphic);
+							} else {
+								layer = null;
+								if (console !== undefined) {
+									console.warn("Unknown geometry type", graphic);
+								}
+							}
+						} catch (e) {
+							console.error(e);
+						}
+					}
+				}
+			}
 		}
 		
 		function init() {
@@ -21,10 +82,10 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 			
 			// Set up the map.
 			map = new esri.Map("map");
-			basemap = new esri.layers.ArcGISTiledMapServiceLayer("http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer");
+			basemap = new esri.layers.ArcGISTiledMapServiceLayer("http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer");
 			map.addLayer(basemap);
 			
-			infoTemplate = new esri.InfoTemplate("Attributes", "${*}");
+			// infoTemplate = new esri.InfoTemplate("Attributes", "${*}");
 			
 			// Setup graphics layers for the various geometry types.
 			pointLayer = new esri.layers.GraphicsLayer({
@@ -48,43 +109,20 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 				
 				for (i = 0, l = layers.length; i < l; i += 1) {
 					layer = layers[i];
-					layer.setInfoTemplate(infoTemplate);
+					// layer.setInfoTemplate(infoTemplate);
 					map.addLayer(layer);
 					dojo.connect(layer, "onGraphicAdd", addGraphicToTextArea);
 				}
 			}());
 			
-			on(dom.byId("saveButton"), "click", function() {
-				var text;
-				if (localStorage === undefined) {
-					window.alert("Your browser does not support this feature.");
-				} else {
-					text = dom.byId("textArea").value;
-					if (text.length > 0) {
-						localStorage.setItem("geometry", text);
-					} else {
-						localStorage.removeItem("geometry");
-					}
-					
-				}
-			});
-			
-			// Setup event handler to style the textarea differently if there is an invalid JSON string in the box.
-			on(dom.byId("attributesTextArea"), "keyup", function() {
-				var textArea = this, attributes = null;
-				try {
-					if (textArea.value.length > 0) {
-						attributes = JSON.parse(textArea.value);
-					}
-					dojo.removeClass(textArea, "error");
-				} catch (SyntaxError) {
-					dojo.addClass(textArea, "error");
-				}
-			});
-			
 			dojo.connect(map, "onLoad", function(map) {
 				//resize the map when the browser resizes
-				dojo.connect(dijit.byId('map'), 'resize', map,map.resize);
+				on(window, 'resize', function() {
+					map.resize();
+				});
+				
+				dojo.connect(map, "onLayerAdd", loadGraphicsFromLocalStorage);
+				
 				// Set up the draw toolbar.
 				drawToolbar = new esri.toolbars.Draw(map);
 				
@@ -93,7 +131,8 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 					pointLayer.clear();
 					polylineLayer.clear();
 					polygonLayer.clear();
-					dom.byId("textArea").value = "";
+					
+					clearGraphicsFromLocalStorage();
 				});
 				
 				// Set the select box to activate or deactivate the draw toolbar depending on selection.
@@ -118,19 +157,6 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 					var graphic, attributes, jsonText;
 					if (geometry) {
 						graphic = new esri.Graphic(geometry);
-						try {
-							jsonText = dom.byId("attributesTextArea").value;
-							if (jsonText) {
-								attributes = JSON.parse(jsonText);
-								graphic.setAttributes(attributes);
-							}
-						} catch (SyntaxError) {
-							/*jslint devel: true */
-							if (console) {
-								console.warn("Invalid attributes JSON was specified.");
-							}
-							/*jslint devel: false */
-						}
 						if (geometry.type === "point" || geometry.type === "multipoint") {
 							pointLayer.add(graphic);
 						} else if (geometry.type === "polyline") {
@@ -138,6 +164,9 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 						} else if (geometry.type === "polygon" || geometry.type === "extent") {
 							polygonLayer.add(graphic);
 						}
+						
+						saveGraphicToLocalStorage(graphic);
+
 					}
 				});
 			});
