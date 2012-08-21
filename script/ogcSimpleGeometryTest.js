@@ -12,10 +12,9 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 			simpleGeometry = ogc.SimpleGeometry(graphic.geometry);
 		}
 		
-		/**
-		 * Saves a graphic to the localStorage "graphics" item. 
- 		 * @param {esri.Graphic} graphic
-		 */
+		/** Saves a graphic to the localStorage "graphics" item. 
+		* @param {esri.Graphic} graphic
+		*/
 		function saveGraphicToLocalStorage(graphic) {
 			var graphics;
 			if (localStorage !== undefined) {
@@ -45,7 +44,7 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 		 */
 		function loadGraphicsFromLocalStorage() {
 			var graphics, graphic, i, l, layer, pointRe = /point$/i, polygonRe = /^(?:(?:polygon)|(?:extent))$/i, polylineRe = /line$/i;
-			if (localStorage !== undefined && pointLayer.loaded && polygonLayer.loaded && polylineLayer.loaded) {
+			if (localStorage !== undefined) {
 				
 				// Get previously saved graphics.  If available this will be a JSON representation of array of objects.
 				graphics = localStorage.getItem("graphics");
@@ -65,9 +64,11 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 								polylineLayer.add(graphic);
 							} else {
 								layer = null;
+								/*jslint devel:true*/
 								if (console !== undefined) {
 									console.warn("Unknown geometry type", graphic);
 								}
+								/*jslint devel:false*/
 							}
 						} catch (e) {
 							console.error(e);
@@ -78,7 +79,7 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 		}
 		
 		function init() {
-			var basemap, infoTemplate;
+			var basemap;
 			
 			// Set up the map.
 			map = new esri.Map("map");
@@ -121,8 +122,6 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 					map.resize();
 				});
 				
-				dojo.connect(map, "onLayerAdd", loadGraphicsFromLocalStorage);
-				
 				// Set up the draw toolbar.
 				drawToolbar = new esri.toolbars.Draw(map);
 				
@@ -154,7 +153,7 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 				
 				// Add a graphic to the map when the user has finished drawing a geometry.
 				dojo.connect(drawToolbar, "onDrawEnd", function(geometry) {
-					var graphic, attributes, jsonText;
+					var graphic;
 					if (geometry) {
 						graphic = new esri.Graphic(geometry);
 						if (geometry.type === "point" || geometry.type === "multipoint") {
@@ -169,6 +168,8 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 
 					}
 				});
+				
+				loadGraphicsFromLocalStorage();
 			});
 			
 	
