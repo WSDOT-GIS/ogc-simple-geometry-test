@@ -83,6 +83,8 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 			});
 			
 			dojo.connect(map, "onLoad", function(map) {
+				//resize the map when the browser resizes
+				dojo.connect(dijit.byId('map'), 'resize', map,map.resize);
 				// Set up the draw toolbar.
 				drawToolbar = new esri.toolbars.Draw(map);
 				
