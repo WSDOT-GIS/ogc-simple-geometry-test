@@ -2,6 +2,8 @@
 /// <reference path="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.1compact"/>"
 define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 	"use strict";
+	
+	var ogcSimpleGeometry;
 
 	/**
 	 * Converts an array representing rings or paths (of a polygon or polyine) into OGC Simple Geometry string equivalent. 
@@ -71,7 +73,7 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 	 * @property {string} wkt Well-Known Text (WKT) that defines an OGC Simple Geometry.
 	 * @property {number} srid The spatial reference identifier or Well-known identifier (WKID) representing a spatial reference.
 	 */
-	function OgcSimpleGeometry(g, wkid) {
+	function SimpleGeometry(g, wkid) {
 		// Matches a SQL geometry definition
 		/*jslint regexp: true*/
 		var sqlDefRe = /geo(?:(?:metr)|(?:raph))y\:\:\w+\('([^']+)'(?:,\s*(\d+))?\)/gi, match;
@@ -184,9 +186,47 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 		}
 		return output;
 	}
+	
+	/**
+	 * Converts an array of features into a SQL table definition statement. 
+	 * @param {esri.Graphic[]} features
+	 * @return {string} Returns a SQL statement that creates a table containing the geometries. 
+	 */
+	function featuresToSql(features, tableName) {
+		var output, feature, geometry, i, l;
+		
+		if (!tableName) {
+			tableName = "Shapes";
+		}
+		
+		// TODO: Get attributes from first feature and add in column definition.
+		
+		output = ["CREATE TABLE [", tableName,
+			"] ( [Shape] geometry );\nGO\n"
+		];
+		
+		
+		if (features && features.length) {
+			output.push(["INSERT INTO ", tableName, " ([Shape]) VALUES "].join(""));
+			
+			for (i = 0, l = features.length; i < l; i += 1) {
+				feature = features[i];
+				geometry = new SimpleGeometry(feature.geometry);
+				geometry = geometry.getSqlConstructor();
+				if (i > 0) {
+					output.push(",");
+				}
+				output.push("(" + geometry + ")");
+			}
+			
+			output.push(";");
+		}
+		
+		return output.join("");
+	}
 
-	return declare("ogc.SimpleGeometry", null, {
-		constructor: OgcSimpleGeometry,
+	ogcSimpleGeometry = declare("ogc.SimpleGeometry", null, {
+		constructor: SimpleGeometry,
 		getSqlConstructor: function () {
 			return getSqlConstructor(this);
 		},
@@ -194,5 +234,12 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 			return toEsriGeometry(this);
 		}
 	});
+	
+	
+	
+	/*globals ogc*/
+	ogc.featuresToSql = featuresToSql;
+	
+	return ogcSimpleGeometry;
 
 });
