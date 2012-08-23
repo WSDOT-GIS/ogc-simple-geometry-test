@@ -16,12 +16,3 @@ body{
 	top: 1em;
 	background-color: rgba(250, 250, 255, 0.7);
 }
-
-label[for=attributesTextArea], #sql > label {
-	display: block;
-}
-
-.error {
-	background-color: #ffcccc;
-	border-color: #ff0000;
-}

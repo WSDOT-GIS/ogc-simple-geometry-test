@@ -20,3 +20,9 @@ ogc.SimpleGeometry.prototype = {
 		/// <returns type="esri.geometry.Geometry" />
 	}
 };
+
+ogc.featuresToSql = function() {
+	/// <summary>Converts an array of features into a SQL table definition statement.</summary>
+	/// <param name="features" type="esri.Graphic[]|object">An array of graphics or feature objects.</param>
+	/// <returns type="string">Returns a SQL statement that creates a table containing the geometries.</returns> 
+}
