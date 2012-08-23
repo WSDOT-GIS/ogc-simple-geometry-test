@@ -77,12 +77,33 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 			}
 		}
 		
+		/**
+		 * Gets the saved extent from localStorage. 
+		 */
 		function getSavedExtent() {
 			var extent = null;
 			if (localStorage !== undefined && localStorage.extent) {
 				extent = new esri.geometry.Extent(JSON.parse(localStorage.extent));
 			}
 			return extent;
+		}
+		
+		function showSql() {
+			var output = [], layers = [pointLayer, polylineLayer, polygonLayer], i, l, layer, sql;
+			
+			for (i = 0, l = layers.length; i < l; i+=1) {
+				layer = layers[i];
+				if (layer.graphics.length > 0) {
+					
+					output.push(ogc.featuresToSql(layer.graphics, layer.id));
+				}
+			}
+			
+			output = output.join("\n\n");
+			
+			console.log(output);
+			
+			//return output;
 		}
 		
 		function init() {
@@ -149,6 +170,9 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 					
 					clearGraphicsFromLocalStorage();
 				});
+				
+				// Setup the SQL button
+				on(dom.byId("toSqlButton"), "click", showSql);
 				
 				// Set the select box to activate or deactivate the draw toolbar depending on selection.
 				on(dom.byId("geometryTypeSelect"), "change", function() {
