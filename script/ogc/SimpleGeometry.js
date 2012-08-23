@@ -44,6 +44,8 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 					output.push(")");
 				}
 			}
+			
+			output.push(")");
 		}
 
 		return output.join("");
@@ -211,7 +213,7 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 			
 			for (i = 0, l = features.length; i < l; i += 1) {
 				feature = features[i];
-				geometry = new SimpleGeometry(feature.geometry);
+				geometry = new ogc.SimpleGeometry(feature.geometry);
 				geometry = geometry.getSqlConstructor();
 				if (i > 0) {
 					output.push(",");
