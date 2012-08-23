@@ -38,7 +38,6 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 				localStorage.removeItem("graphics");
 			}
 		}
-		
 		/**
 		 * Loads the graphics from local storage and adds them to the appropriate graphics layers. 
 		 */
@@ -78,11 +77,21 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 			}
 		}
 		
+		function getSavedExtent() {
+			var extent = null;
+			if (localStorage !== undefined && localStorage.extent) {
+				extent = new esri.geometry.Extent(JSON.parse(localStorage.extent));
+			}
+			return extent;
+		}
+		
 		function init() {
 			var basemap;
 			
 			// Set up the map.
-			map = new esri.Map("map");
+			map = new esri.Map("map", {
+				extent: getSavedExtent()
+			});
 			basemap = new esri.layers.ArcGISTiledMapServiceLayer("http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer");
 			map.addLayer(basemap);
 			
@@ -120,6 +129,13 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 				//resize the map when the browser resizes
 				on(window, 'resize', function() {
 					map.resize();
+				});
+				
+				dojo.connect(map, "onExtentChange", function(extent) {
+					// Save the extent when the map's extent changes.
+					if (localStorage !== undefined) {
+						localStorage.setItem("extent", JSON.stringify(extent.toJson()));
+					}
 				});
 				
 				// Set up the draw toolbar.
