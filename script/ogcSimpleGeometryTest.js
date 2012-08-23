@@ -1,10 +1,10 @@
 /*global require, dojo, ogc, esri*/
 /*jslint white: true, browser: true */
-require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolbars/draw", "ogc/SimpleGeometry"], 
-	function(dom, on) {
+require(["dojo/dom", "dojo/on", "dijit/Dialog", "esri/map", "esri/layers/agstiled", "esri/toolbars/draw", "ogc/SimpleGeometry"], 
+	function(dom, on, Dialog) {
 		"use strict";
 
-		var map, drawToolbar, pointLayer, polylineLayer, polygonLayer;
+		var map, drawToolbar, pointLayer, polylineLayer, polygonLayer, sqlDialog;
 		
 		function addGraphicToTextArea(graphic) {
 			var simpleGeometry, textArea;
@@ -101,7 +101,20 @@ require(["dojo/dom", "dojo/on", "esri/map", "esri/layers/agstiled", "esri/toolba
 			
 			output = output.join("\n\n");
 			
-			console.log(output);
+			output = "<textarea style='width: 640px; height:480px;'>" + output + "</textarea>";
+			
+			if (!sqlDialog) {
+				sqlDialog = new Dialog({
+					title: "SQL",
+					content: output
+				});
+			} else {
+				sqlDialog.set("content", output);
+			}
+			
+			sqlDialog.show();
+			
+			
 			
 			//return output;
 		}

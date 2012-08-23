@@ -209,7 +209,7 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 		
 		
 		if (features && features.length) {
-			output.push(["INSERT INTO ", tableName, " ([Shape]) VALUES "].join(""));
+			output.push(["INSERT INTO [", tableName, "] ([Shape]) VALUES "].join(""));
 			
 			for (i = 0, l = features.length; i < l; i += 1) {
 				feature = features[i];
