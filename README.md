@@ -6,6 +6,9 @@ This library adds support for conversion between OGC Simple Geometry and [ArcGIS
 ## Usage ##
 See `index.html` for an example.
 
+## Sample ##
+The sample application can be viewed at http://wsdot-gis.github.com/ogcsimplegeometry/.
+
 ## License ##
 Licensed under [The MIT License](http://opensource.org/licenses/MIT).
 
