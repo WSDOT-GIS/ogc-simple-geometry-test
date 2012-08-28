@@ -24,7 +24,7 @@ body{
 	position: absolute;
 	left: -3em;
 	bottom: 2.5em;
-	/* 45 deg ccw rotation */
+	/* 45 deg cw rotation */
 	-moz-transform: rotate(45deg);
 	-webkit-transform: rotate(45deg);
 	/* shadow */
