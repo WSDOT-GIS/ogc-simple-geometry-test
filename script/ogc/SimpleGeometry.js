@@ -2,7 +2,7 @@
 /// <reference path="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.1compact"/>"
 define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 	"use strict";
-	
+
 	var ogcSimpleGeometry;
 
 	/**
@@ -44,7 +44,7 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 					output.push(")");
 				}
 			}
-			
+
 			output.push(")");
 		}
 
@@ -58,8 +58,8 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 	 */
 	function toOgcMultipoint(esriMultipoint) {
 		var output = ["MULTIPOINT("], i, l, point;
-		
-		for (i = 0, l = esriMultipoint.points.length; i < l; i++) {
+
+		for (i = 0, l = esriMultipoint.points.length; i < l; i += 1) {
 			point = esriMultipoint.points[i];
 			if (i > 0) {
 				output.push(",");
@@ -67,7 +67,7 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 			output.push([String(point[0]), String(point[1])].join(" "));
 		}
 		output.push(")");
-		
+
 		return output.join("");
 	}
 
@@ -145,22 +145,41 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 		}
 
 		function parseToArrays() {
-			var lineStrings = linestringRE.exec(ogcSimpleGeometry.wkt).slice(1), points;
+			var lineStrings = linestringRE.exec(ogcSimpleGeometry.wkt).slice(1), points, lsi, lsl, pi, pl, ci, cl, point, output, outputLS, outputPoint;
+
+			output = [];
+
+			// Loop through all of the linestrings in a multilinestring.
+			for (lsi = 0, lsl = lineStrings.length; lsi < lsl; lsi += 1) {
+				points = lineStrings[lsi].split(",");
+				outputLS = [];
+				// Loop through all of the points in a linestring.
+				for (pi = 0, pl = points.length; pi < pl; pi += 1) {
+					point = points[pi].split(/\s+/);
+					outputPoint = [];
+					// Loop through all of the coordinates in a point.
+					for (ci = 0, cl = point.length; ci < cl; ci += 1) {
+						outputPoint.push(Number(point[ci]));
+					}
+					outputLS.push(outputPoint);
+				}
+				output.push(outputLS);
+			}
+
+			return output;
+
+			/*
+			// Alternative method using dojo.map.
 			return dojo.map(lineStrings, function (ls) {
-				points = ls.split(",");
-				/*
-				console.log({
-					lineStrings: lineStrings,
-					ls: ls,
-					"points": points
-				});
-				*/
-				return dojo.map(points, function (point) {
-					return dojo.map(point.split(/\s+/), function (coord) {
-						return Number(coord);
-					});
-				});
-			});
+							points = ls.split(",");
+							return dojo.map(points, function (point) {
+								return dojo.map(point.split(/\s+/), function (coord) {
+									return Number(coord);
+								});
+							});
+						});
+			*/
+
 		}
 
 		if (/\bPOINT\b/i.test(ogcSimpleGeometry.wkt)) {
@@ -179,6 +198,16 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 			};
 		}
 
+		if (ogcSimpleGeometry.srid !== null && ogcSimpleGeometry.srid !== undefined) {
+			json.spatialReference = {
+				wkid: ogcSimpleGeometry.srid
+			};
+		}
+
+		if (esri !== undefined && esri.geometry !== undefined && esri.geometry.fromJson !== undefined) {
+			json = esri.geometry.fromJson(json);
+		}
+
 		return json;
 	}
 
@@ -191,7 +220,7 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 		}
 		return output;
 	}
-	
+
 	/**
 	 * Converts an array of features into a SQL table definition statement. 
 	 * @param {esri.Graphic[]} features
@@ -199,34 +228,33 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 	 */
 	function featuresToSql(features, tableName) {
 		var output, feature, geometry, i, l;
-		
+
 		if (!tableName) {
 			tableName = "Shapes";
 		}
-		
+
 		// TODO: Get attributes from first feature and add in column definition.
-		
-		output = ["CREATE TABLE [", tableName,
-			"] ( [Shape] geometry );\nGO\n"
-		];
-		
-		
+
+		output = ["CREATE TABLE [", tableName, "] ( [Shape] geometry );\nGO\n" ];
+
 		if (features && features.length) {
 			output.push(["INSERT INTO [", tableName, "] ([Shape]) VALUES "].join(""));
-			
+
 			for (i = 0, l = features.length; i < l; i += 1) {
 				feature = features[i];
+				/*global ogc*/
 				geometry = new ogc.SimpleGeometry(feature.geometry);
+				/*global ogc:false*/
 				geometry = geometry.getSqlConstructor();
 				if (i > 0) {
 					output.push(",");
 				}
 				output.push("(" + geometry + ")");
 			}
-			
+
 			output.push(";");
 		}
-		
+
 		return output.join("");
 	}
 
@@ -239,12 +267,10 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 			return toEsriGeometry(this);
 		}
 	});
-	
-	
-	
+
 	/*globals ogc*/
 	ogc.featuresToSql = featuresToSql;
-	
+
 	return ogcSimpleGeometry;
 
 });
