@@ -1,5 +1,9 @@
+/**
+ * Defines the ogc.SimpleGeometry class.
+ * Copyright (C) 2012 Washington State Department of Transportation.  Licensed under The MIT License (http://opensource.org/licenses/MIT).  
+ *@author Jeff Jacobson 
+ */
 /*global define,dojo,esri*/
-/// <reference path="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.1compact"/>"
 define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 	"use strict";
 
@@ -81,7 +85,7 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 	function SimpleGeometry(g, wkid) {
 		// Matches a SQL geometry definition
 		/*jslint regexp: true*/
-		var sqlDefRe = /geo(?:(?:metr)|(?:raph))y\:\:\w+\('([^']+)'(?:,\s*(\d+))?\)/gi, match;
+		var sqlDefRe = /geo(?:(?:metr)|(?:raph))y\:\:\w+\('([^']+)'(?:,\s*(\d+))?\)/gi, parenRe = /\((.+)\)/, match;
 		/*jslint regexp: false*/
 
 		if (typeof (g) === "string") {
@@ -104,7 +108,11 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 				this.wkt = toOgcMultipoint(g);
 			} else if (g.type === "polyline" || g.paths) {
 				// TODO: Detect if output could be LINESTRING.
-				this.wkt = "MULTILINESTRING" + ringsOrPathsToOgc(g.paths);
+				if (g.paths.length > 1) {
+					this.wkt = "MULTILINESTRING" + ringsOrPathsToOgc(g.paths);
+				} else {
+					this.wkt = "LINESTRING" + parenRe.exec(ringsOrPathsToOgc(g.paths))[1];
+				}
 			} else if (g.type === "polygon" || g.rings) {
 				this.wkt = "POLYGON" + ringsOrPathsToOgc(g.rings);
 			} else if (g.type === "extent" || (g.xmin !== undefined && g.ymin !== undefined && g.xmax !== undefined && g.ymax !== undefined)) {
@@ -188,7 +196,7 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 			json = {
 				points: parseToArrays()
 			};
-		} else if (/MULTILINESTRING/i.test(ogcSimpleGeometry.wkt)) {
+		} else if (/(?:MULTI)?LINESTRING/i.test(ogcSimpleGeometry.wkt)) {
 			json = {
 				paths: parseToArrays()
 			};
