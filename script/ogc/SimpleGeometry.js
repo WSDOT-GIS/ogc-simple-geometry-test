@@ -107,7 +107,6 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 			} else if (g.type === "multipoint" || g.points) {
 				this.wkt = toOgcMultipoint(g);
 			} else if (g.type === "polyline" || g.paths) {
-				// TODO: Detect if output could be LINESTRING.
 				if (g.paths.length > 1) {
 					this.wkt = "MULTILINESTRING" + ringsOrPathsToOgc(g.paths);
 				} else {
