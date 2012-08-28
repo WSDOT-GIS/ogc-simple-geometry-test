@@ -22,3 +22,6 @@ This file provides code completion for `ogcSimpleGeometry.js` in Visual Studio. 
 
 ### `ogcSimpleGeometryTest.js` ###
 This file is used by the `default.html` sample page, demonstrating how the ogc.SimpleGeomtry class can be used by an application.
+
+## Acknowlegments ##
+* [CSS GitHub Ribbon](http://unindented.org/articles/2009/10/github-ribbon-using-css-transforms/)

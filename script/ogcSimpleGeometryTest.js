@@ -190,6 +190,8 @@ require(["dojo/dom", "dojo/on", "dijit/Dialog", "esri/map", "esri/layers/agstile
 				// Set the select box to activate or deactivate the draw toolbar depending on selection.
 				on(dom.byId("geometryTypeSelect"), "change", function() {
 					// "this" is the select element.
+					// Change the "select a geometry" text to "Off", now that the user knows what to do.
+					this[0].text = "Off";
 					var geometryType = this.value;
 					if (geometryType !== null && geometryType !== "") {
 						pointLayer.disableMouseEvents();
