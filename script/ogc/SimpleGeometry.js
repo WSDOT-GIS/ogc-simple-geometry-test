@@ -57,15 +57,18 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 	 * @returns {OgcSimpleGeometry}
 	 */
 	function toOgcMultipoint(esriMultipoint) {
-		var output = "MULTIPOINT(";
-		dojo.forEach(esriMultipoint.points, function (point, index) {
-			if (index > 0) {
-				output += ",";
+		var output = ["MULTIPOINT("], i, l, point;
+		
+		for (i = 0, l = esriMultipoint.points.length; i < l; i++) {
+			point = esriMultipoint.points[i];
+			if (i > 0) {
+				output.push(",");
 			}
-			output += String(point[0]) + " " + String(point[1]);
-		});
-		output += ")";
-		return output;
+			output.push([String(point[0]), String(point[1])].join(" "));
+		}
+		output.push(")");
+		
+		return output.join("");
 	}
 
 	/**
