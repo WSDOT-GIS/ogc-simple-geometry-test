@@ -249,10 +249,8 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 
 			for (i = 0, l = features.length; i < l; i += 1) {
 				feature = features[i];
-				/*global ogc*/
-				geometry = new ogc.SimpleGeometry(feature.geometry);
-				/*global ogc:false*/
-				geometry = geometry.getSqlConstructor();
+				geometry = new SimpleGeometry(feature.geometry);
+				geometry = getSqlConstructor(geometry);
 				if (i > 0) {
 					output.push(",");
 				}
