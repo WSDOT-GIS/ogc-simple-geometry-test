@@ -79,10 +79,11 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 	 * A class representing an Open-Geospatial Consortium (OGC) Simple Geometry.
 	 * @param {string|esri.geometry.Geometry} g Either a simple geometry definition string or a JSON object containing a WKT string and spatial reference WKID.
 	 * @param {number} [wkid] If the g parameter does not include spatial reference information, you must include a spatial reference WKID here.
+	 * @param {boolean} forceMultiLineString Forces the creation of a Multilinestring in situations where a linestring would normally be generated.  Ignored for other geometry types.
 	 * @property {string} wkt Well-Known Text (WKT) that defines an OGC Simple Geometry.
 	 * @property {number} srid The spatial reference identifier or Well-known identifier (WKID) representing a spatial reference.
 	 */
-	function SimpleGeometry(g, wkid) {
+	function SimpleGeometry(g, wkid, forceMultiLineString) {
 		// Matches a SQL geometry definition
 		/*jslint regexp: true*/
 		var sqlDefRe = /geo(?:(?:metr)|(?:raph))y\:\:\w+\('([^']+)'(?:,\s*(\d+))?\)/gi, parenRe = /\((.+)\)/, match;
@@ -107,7 +108,7 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 			} else if (g.type === "multipoint" || g.points) {
 				this.wkt = toOgcMultipoint(g);
 			} else if (g.type === "polyline" || g.paths) {
-				if (g.paths.length > 1) {
+				if (g.paths.length > 1 || forceMultiLineString) {
 					this.wkt = "MULTILINESTRING" + ringsOrPathsToOgc(g.paths);
 				} else {
 					this.wkt = "LINESTRING" + parenRe.exec(ringsOrPathsToOgc(g.paths))[1];

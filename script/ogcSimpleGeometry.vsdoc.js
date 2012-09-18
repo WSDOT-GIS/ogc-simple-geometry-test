@@ -10,6 +10,7 @@ ogc.SimpleGeometry = function(g, wkid) {
 	/// <param name="wkid" type="Number">
 	/// If the <paramref name="g"/> does not include spatial reference information, you must include a spatial reference WKID here.
 	/// </param>
+	/// <param name="forceMultiLineString" type="Boolean">Forces the creation of a Multilinestring in situations where a linestring would normally be generated.  Ignored for other geometry types.</param>
 };
 
 ogc.SimpleGeometry.prototype = {
