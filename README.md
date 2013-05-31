@@ -1,7 +1,7 @@
 OGC Simple Geometry for ArcGIS JavaScript API
 =============================================
 
-This library adds support for conversion between OGC Simple Geometry and [ArcGIS Server Javascript API](http://links.esri.com/javascript) [geometry](http://help.arcgis.com/en/webapi/javascript/arcgis/help/jsapi_start.htm#jsapi/geometry.htm).
+This library adds support for conversion between OGC Simple Geometry and [ArcGIS Server API for Javascript geometry].
 
 ## Usage ##
 See `index.html` for an example.
@@ -25,3 +25,5 @@ This file is used by the `default.html` sample page, demonstrating how the ogc.S
 
 ## Acknowlegments ##
 * [CSS GitHub Ribbon](http://unindented.org/articles/2009/10/github-ribbon-using-css-transforms/)
+
+[ArcGIS Server API for Javascript geometry]:http://developers.arcgis.com/en/javascript/jsapi/geometry-amd.html
