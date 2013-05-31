@@ -1,6 +1,6 @@
 /*global require, dojo, ogc, esri*/
 /*jslint white: true, browser: true */
-require(["dojo/dom", "dojo/on", "dijit/Dialog", "esri/map", "esri/layers/agstiled", "esri/toolbars/draw", "ogc/SimpleGeometry"], 
+require(["dojo/dom", "dojo/on", "dijit/Dialog", "esri/map", "esri/layers/agstiled", "esri/toolbars/draw", "ogc/SimpleGeometryArcGis"], 
 	function(dom, on, Dialog) {
 		"use strict";
 
@@ -252,8 +252,9 @@ require(["dojo/dom", "dojo/on", "dijit/Dialog", "esri/map", "esri/layers/agstile
 						}
 						graphic = new esri.Graphic(esriGeometry);
 						layer.add(graphic);
+						saveGraphicToLocalStorage(graphic);
 					}
-				}
+				};
 			});
 			
 	
