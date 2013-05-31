@@ -40,7 +40,7 @@ require(function () {
 		return output;
 	}
 
-	function parseSimpleGeometry( /**{string}*/ wkt) {
+	function OgcSimpleGeometry(wkt, srid) {
 		var pointRe, multiPointRe, lineStringRe, multiLineStringRe, polygonRe, singleDepthRe, geometry, typeRe = /^\w+\b/, type;
 
 		// define regexps.
@@ -60,16 +60,41 @@ require(function () {
 				geometry = geometry[0];
 			}
 		}
-		type = wkt.match(typeRe)[0];
-		return {
-			geometry: geometry,
-			type: type
-		};
+		// Get the type.  Force to uppercase.
+		type = wkt.match(typeRe)[0].toUpperCase();
+
+		this.wkt = wkt;
+		this.type = type;
+		this.geometry = geometry;
+		this.srid = srid;
 	}
 
-	return function OgcSimpleGeometry(wkt, srid) {
-		this.wkt = wkt;
-		this.geometry = parseSimpleGeometry(wkt);
-		this.srid = srid;
-	};
+	// Add type constants.
+
+	/** @constant {string}
+	    @default
+	*/
+	OgcSimpleGeometry.TYPE_POINT = "POINT";
+	/** @constant {string}
+	    @default
+	*/
+	OgcSimpleGeometry.TYPE_MULTIPOINT = "MULTIPOINT";
+	/** @constant {string}
+	    @default
+	*/
+	OgcSimpleGeometry.TYPE_LINESTRING = "LINESTRING";
+	/** @constant {string}
+	    @default
+	*/
+	OgcSimpleGeometry.TYPE_MULTILINESTRING = "MULTILINESTRING";
+	/** @constant {string}
+	    @default
+	*/
+	OgcSimpleGeometry.TYPE_POLYGON = "POLYGON";
+	/** @constant {string}
+	    @default
+	*/
+	OgcSimpleGeometry.TYPE_MULTIPOLYGON = "MULTIPOLYGON";
+
+	return OgcSimpleGeometry;
 });
