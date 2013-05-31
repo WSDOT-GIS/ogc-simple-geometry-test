@@ -10,11 +10,11 @@
 			async: true, 
 			packages: [{
 				name: "ogc",
-					location: location.pathname.replace(/\/[^/]+$/, "") + "/script/ogc"
+					location: "/script/ogc"
 				}]
 		};
 		</script>
-		<script src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.5"></script>
+		<script src="http://serverapi.arcgisonline.com/jsapi/arcgis/3.5/"></script>
 		<!-- <script src="script/ogcSimpleGeometry.js"></script> -->
 		
 		<script src="script/ogcSimpleGeometryTest.js"></script>
@@ -58,6 +58,10 @@
 					</select>
 					<button id="clearButton" type="button" title="Clear all graphics from the map">Clear</button>
 					<button id="toSqlButton" type="button" title="Export graphics to SQL">SQL</button>
+				</div>
+				<div>
+					<textarea id="ogcSimpleGeometryTextArea" placeholder="Enter OGC Simple Geometry here"></textarea>
+					<button id="addOgcButton" type="button" title="Add OGC Simple Geometry">Add</button>
 				</div>
 			</div>
 			

@@ -232,6 +232,7 @@ define(["dojo/_base/declare", "esri/geometry"], function (declare) {
 	/**
 	 * Converts an array of features into a SQL table definition statement. 
 	 * @param {esri.Graphic[]} features
+	 * @param {String} [tableName] The name of the table in the output "CREATE TABLE" statement. Defaults to "Shapes".
 	 * @return {string} Returns a SQL statement that creates a table containing the geometries. 
 	 */
 	function featuresToSql(features, tableName) {

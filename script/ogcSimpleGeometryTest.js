@@ -225,6 +225,35 @@ require(["dojo/dom", "dojo/on", "dijit/Dialog", "esri/map", "esri/layers/agstile
 				});
 				
 				loadGraphicsFromLocalStorage();
+
+				//Setup the OGC Simple Geometry entry text area and button.
+				document.getElementById("addOgcButton").onclick = function () {
+					var simpleGeometryText, simpleGeometry, esriGeometry, layer, graphic;
+					simpleGeometryText = document.getElementById("ogcSimpleGeometryTextArea").value;
+
+					try {
+						simpleGeometry = ogc.SimpleGeometry(simpleGeometryText, map.spatialReference.wkid);
+						esriGeometry = simpleGeometry.toEsriGeometry();
+					} catch (e) {
+						console.error(e);
+					}
+
+					////console.debug({ ogc: simpleGeometry, esri: esriGeometry });
+
+					if (esriGeometry) {
+						if (esriGeometry.type === "point" || esriGeometry.type === "multipoint") {
+							layer = pointLayer;
+						}
+						else if (esriGeometry.type === "polyline") {
+							layer = polylineLayer;
+						}
+						else if (esriGeometry.type === "polygon" || esriGeometry.type === "extent") {
+							layer = polygonLayer;
+						}
+						graphic = new esri.Graphic(esriGeometry);
+						layer.add(graphic);
+					}
+				}
 			});
 			
 	
