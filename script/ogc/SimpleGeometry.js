@@ -67,7 +67,7 @@ define(function () {
 
 	/**
 	 * Converts an array representing rings or paths (of a polygon or polyine) into OGC Simple Geometry string equivalent. 
-	 * @param {Array} An array containing arrays containing arrays of numbers. 
+	 * @param {Number[][][]} An array containing arrays containing arrays of numbers. 
 	 * @returns {String} The string equivalent of the input array.  Note that the geometry type (e.g., "POLYGON") will not be included in this string.
 	 */
 	function ringsOrPathsToOgc(paths) {
@@ -108,6 +108,15 @@ define(function () {
 			output.push(")");
 		}
 
+		return output.join("");
+	}
+
+	function pointsToOgc(/* Number[][] */ points) {
+		var output = ["("];
+		for (var i = 0, l = points.length; i < l; i += 1) {
+			output.push(points[i].join(" "));
+		}
+		output.push(")");
 		return output.join("");
 	}
 
@@ -187,7 +196,9 @@ define(function () {
 		var wkt;
 		if (this.geometry) {
 			if (this.type === TYPE_POINT) {
-				wkt = ["(", this.geometry[0], this.geometry[1], ")"].join("");
+				wkt = ["(", this.geometry[0], " ", this.geometry[1], ")"].join("");
+			} else if (this.type === TYPE_MULTIPOINT) {
+				wkt = pointsToOgc(this.geometry);
 			} else {
 				wkt = ringsOrPathsToOgc(this.geometry);
 			}
