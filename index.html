@@ -1,18 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-us">
 	<head>
 		<title>OGC Simple Geometry Demo</title>
+		<meta charset="utf-8" lang="en-us" />
 		<link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.5/js/esri/css/esri.css">
 		<link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.5/js/dojo/dijit/themes/claro/claro.css">
 		<link rel="stylesheet" href="style/default.css" />
 		<script>
-		var dojoConfig = {
-			async: true, 
-			packages: [{
-				name: "ogc",
-					location: "/script/ogc"
+			var dojoConfig = {
+				async: true,
+				packages: [{
+					name: "ogc",
+					location: location.pathname.replace(/\/(?:[^\/]+\.html)?/, "/script/ogc")
 				}]
-		};
+			};
 		</script>
 		<script src="http://serverapi.arcgisonline.com/jsapi/arcgis/3.5/"></script>
 		<!-- <script src="script/ogcSimpleGeometry.js"></script> -->
@@ -60,14 +61,13 @@
 					<button id="toSqlButton" type="button" title="Export graphics to SQL">SQL</button>
 				</div>
 				<div>
-					<textarea id="ogcSimpleGeometryTextArea" placeholder="Enter OGC Simple Geometry here">MULTILINESTRING ((1223610.5765866693 969966.40606972086, 1223610.57250225 969966.30357024376, 1223599.4861684865 969751.88098899217, 1223596.8774653119 969682.595232485, 1223593.9897047486 969600.37608328846, 1223591.5148868526 969475.348418146, 1223591.5136237962 969475.2172326314))</textarea>
+					<textarea id="ogcSimpleGeometryTextArea" placeholder="Enter OGC Simple Geometry here"></textarea>
 					<button id="addOgcButton" type="button" title="Add OGC Simple Geometry">Add</button>
 				</div>
 			</div>
 			
 
 		</div>
-		<!-- <a href="https://github.com/WSDOT-GIS/ogcsimplegeometry"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a> -->
 		<div class="ribbon"><a href="https://github.com/WSDOT-GIS/ogcsimplegeometry">Fork me on GitHub</a></div>
 
 		
