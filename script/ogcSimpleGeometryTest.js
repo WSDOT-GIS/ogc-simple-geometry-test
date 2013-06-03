@@ -1,7 +1,7 @@
-/*global require, dojo, ogc, esri*/
+/*global require, dojo, esri*/
 /*jslint white: true, browser: true */
-require(["dojo/dom", "dojo/on", "dijit/Dialog", "esri/map", "esri/layers/agstiled", "esri/toolbars/draw", "ogc/SimpleGeometryArcGis"], 
-	function(dom, on, Dialog) {
+require(["dojo/dom", "dojo/on", "ogc/SimpleGeometry", "ogc/SimpleGeometryArcGis", "dijit/Dialog", "esri/map", "esri/layers/agstiled", "esri/toolbars/draw"], 
+	function(dom, on, SimpleGeometry, ogcAgs, Dialog) {
 		"use strict";
 
 		var map, drawToolbar, pointLayer, polylineLayer, polygonLayer, sqlDialog;
@@ -9,7 +9,7 @@ require(["dojo/dom", "dojo/on", "dijit/Dialog", "esri/map", "esri/layers/agstile
 		function addGraphicToTextArea(graphic) {
 			var simpleGeometry, textArea;
 			textArea = dom.byId("textArea");
-			simpleGeometry = ogc.SimpleGeometry(graphic.geometry);
+			simpleGeometry = new SimpleGeometry(graphic.geometry);
 		}
 		
 		/** Saves a graphic to the localStorage "graphics" item. 
@@ -89,13 +89,13 @@ require(["dojo/dom", "dojo/on", "dijit/Dialog", "esri/map", "esri/layers/agstile
 		}
 		
 		function showSql() {
-			var output = [], layers = [pointLayer, polylineLayer, polygonLayer], i, l, layer, sql;
+			var output = [], layers = [pointLayer, polylineLayer, polygonLayer], i, l, layer;
 			
 			for (i = 0, l = layers.length; i < l; i+=1) {
 				layer = layers[i];
 				if (layer.graphics.length > 0) {
 					
-					output.push(ogc.featuresToSql(layer.graphics, layer.id));
+					output.push(ogcAgs.featuresToSql(layer.graphics, layer.id));
 				}
 			}
 			
@@ -232,7 +232,7 @@ require(["dojo/dom", "dojo/on", "dijit/Dialog", "esri/map", "esri/layers/agstile
 					simpleGeometryText = document.getElementById("ogcSimpleGeometryTextArea").value;
 
 					try {
-						simpleGeometry = ogc.SimpleGeometry(simpleGeometryText, map.spatialReference.wkid);
+						simpleGeometry = new SimpleGeometry(simpleGeometryText, map.spatialReference.wkid);
 						esriGeometry = simpleGeometry.toEsriGeometry();
 					} catch (e) {
 						console.error(e);
