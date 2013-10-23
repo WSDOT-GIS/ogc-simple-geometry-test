@@ -1,4 +1,4 @@
-/*global require, dojo*/
+/*global require */
 /*jslint white: true, browser: true */
 require([
 	"dojo/dom",
@@ -170,11 +170,7 @@ require([
 				}
 			}());
 			
-			dojo.connect(map, "onLoad", function(map) {
-				//resize the map when the browser resizes
-				on(window, 'resize', function() {
-					map.resize();
-				});
+			map.on("load", function () {
 				
 				dojo.connect(map, "onExtentChange", function(extent) {
 					// Save the extent when the map's extent changes.
