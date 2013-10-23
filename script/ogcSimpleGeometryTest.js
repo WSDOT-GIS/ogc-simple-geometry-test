@@ -1,7 +1,21 @@
-/*global require, dojo, esri*/
+/*global require, dojo*/
 /*jslint white: true, browser: true */
-require(["dojo/dom", "dojo/on", "ogc/SimpleGeometry", "ogc/SimpleGeometryArcGis", "dijit/Dialog", "esri/map", "esri/layers/agstiled", "esri/toolbars/draw"], 
-	function(dom, on, SimpleGeometry, ogcAgs, Dialog) {
+require([
+	"dojo/dom",
+	"dojo/on",
+	"ogc/SimpleGeometry",
+	"ogc/SimpleGeometryArcGis",
+	"dijit/Dialog",
+	"esri/map",
+	"esri/toolbars/draw",
+	"esri/graphic",
+	"esri/geometry/Extent",
+	"esri/layers/GraphicsLayer",
+	"esri/renderers/SimpleRenderer",
+	"esri/symbols/SimpleMarkerSymbol",
+	"esri/symbols/SimpleLineSymbol",
+	"esri/symbols/SimpleFillSymbol"
+], function(dom, on, SimpleGeometry, ogcAgs, Dialog, Map, Draw, Graphic, Extent, GraphicsLayer, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol) {
 		"use strict";
 
 		var map, drawToolbar, pointLayer, polylineLayer, polygonLayer, sqlDialog;
@@ -13,7 +27,7 @@ require(["dojo/dom", "dojo/on", "ogc/SimpleGeometry", "ogc/SimpleGeometryArcGis"
 		}
 		
 		/** Saves a graphic to the localStorage "graphics" item. 
-		* @param {esri.Graphic} graphic
+		* @param {Graphic} graphic
 		*/
 		function saveGraphicToLocalStorage(graphic) {
 			var graphics;
@@ -54,7 +68,7 @@ require(["dojo/dom", "dojo/on", "ogc/SimpleGeometry", "ogc/SimpleGeometryArcGis"
 					for (i = 0, l = graphics.length; i < l; i += 1) {
 						try {
 							graphic = graphics[i];
-							graphic = new esri.Graphic(graphic);
+							graphic = new Graphic(graphic);
 							if (pointRe.test(graphic.geometry.type)) {
 								pointLayer.add(graphic);
 							} else if (polygonRe.test(graphic.geometry.type)) {
@@ -83,7 +97,7 @@ require(["dojo/dom", "dojo/on", "ogc/SimpleGeometry", "ogc/SimpleGeometryArcGis"
 		function getSavedExtent() {
 			var extent = null;
 			if (localStorage !== undefined && localStorage.extent) {
-				extent = new esri.geometry.Extent(JSON.parse(localStorage.extent));
+				extent = new Extent(JSON.parse(localStorage.extent));
 			}
 			return extent;
 		}
@@ -120,32 +134,29 @@ require(["dojo/dom", "dojo/on", "ogc/SimpleGeometry", "ogc/SimpleGeometryArcGis"
 		}
 		
 		function init() {
-			var basemap;
-			
 			// Set up the map.
-			map = new esri.Map("map", {
+			map = new Map("map", {
+				basemap: "gray",
 				extent: getSavedExtent()
 			});
-			basemap = new esri.layers.ArcGISTiledMapServiceLayer("http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer");
-			map.addLayer(basemap);
 			
-			// infoTemplate = new esri.InfoTemplate("Attributes", "${*}");
+			// infoTemplate = new InfoTemplate("Attributes", "${*}");
 			
 			// Setup graphics layers for the various geometry types.
-			pointLayer = new esri.layers.GraphicsLayer({
+			pointLayer = new GraphicsLayer({
 				id: "points"
 			});
-			polylineLayer = new esri.layers.GraphicsLayer({
+			polylineLayer = new GraphicsLayer({
 				id: "polylines"
 			});
-			polygonLayer = new esri.layers.GraphicsLayer({
+			polygonLayer = new GraphicsLayer({
 				id: "polygons"
 			});
 			
 			// Setup the renderers
-			pointLayer.setRenderer(new esri.renderer.SimpleRenderer(new esri.symbol.SimpleMarkerSymbol().setStyle("circle")));
-			polylineLayer.setRenderer(new esri.renderer.SimpleRenderer(new esri.symbol.SimpleLineSymbol().setStyle("solid")));
-			polygonLayer.setRenderer(new esri.renderer.SimpleRenderer(new esri.symbol.SimpleFillSymbol().setStyle("solid")));
+			pointLayer.setRenderer(new SimpleRenderer(new SimpleMarkerSymbol().setStyle("circle")));
+			polylineLayer.setRenderer(new SimpleRenderer(new SimpleLineSymbol().setStyle("solid")));
+			polygonLayer.setRenderer(new SimpleRenderer(new SimpleFillSymbol().setStyle("solid")));
 			
 			// Add the graphics layers to the map and connect the layer event handlers.
 			(function(){
@@ -173,7 +184,7 @@ require(["dojo/dom", "dojo/on", "ogc/SimpleGeometry", "ogc/SimpleGeometryArcGis"
 				});
 				
 				// Set up the draw toolbar.
-				drawToolbar = new esri.toolbars.Draw(map);
+				drawToolbar = new Draw(map);
 				
 				// Setup the clear button to clear all graphics from the map and text from the text area.
 				on(dom.byId("clearButton"), "click", function() {
@@ -210,7 +221,7 @@ require(["dojo/dom", "dojo/on", "ogc/SimpleGeometry", "ogc/SimpleGeometryArcGis"
 				dojo.connect(drawToolbar, "onDrawEnd", function(geometry) {
 					var graphic;
 					if (geometry) {
-						graphic = new esri.Graphic(geometry);
+						graphic = new Graphic(geometry);
 						if (geometry.type === "point" || geometry.type === "multipoint") {
 							pointLayer.add(graphic);
 						} else if (geometry.type === "polyline") {
@@ -250,7 +261,7 @@ require(["dojo/dom", "dojo/on", "ogc/SimpleGeometry", "ogc/SimpleGeometryArcGis"
 						else if (esriGeometry.type === "polygon" || esriGeometry.type === "extent") {
 							layer = polygonLayer;
 						}
-						graphic = new esri.Graphic(esriGeometry);
+						graphic = new Graphic(esriGeometry);
 						layer.add(graphic);
 						saveGraphicToLocalStorage(graphic);
 					}
