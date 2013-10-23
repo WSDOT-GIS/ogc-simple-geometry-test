@@ -1,0 +1,3 @@
+[submodule "script/ogc"]
+	path = script/ogc
+	url = https://github.com/WSDOT-GIS/ogcsimplegeometry.git
