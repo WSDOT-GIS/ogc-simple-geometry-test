@@ -1,7 +1,6 @@
 /*global require */
 /*jslint white: true, browser: true */
 require([
-	"dojo/dom",
 	"dojo/on",
 	"ogc/SimpleGeometry",
 	"ogc/SimpleGeometryArcGis",
@@ -15,15 +14,21 @@ require([
 	"esri/symbols/SimpleMarkerSymbol",
 	"esri/symbols/SimpleLineSymbol",
 	"esri/symbols/SimpleFillSymbol",
-	"use!proj4js"
-], function (dom, on, SimpleGeometry, ogcAgs, Dialog, Map, Draw, Graphic, Extent, GraphicsLayer, SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, Proj4js) {
+	"use!proj4js",
+	"dojo/text!defs/EPSG/2927.txt",
+	"dojo/text!defs/EPSG/3857.txt"
+], function (
+	on, SimpleGeometry, ogcAgs, Dialog, Map, Draw, Graphic, Extent, GraphicsLayer,
+	SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
+	Proj4js, epsg2927, epsg3857
+) {
 	"use strict";
 
 	var map, drawToolbar, pointLayer, polylineLayer, polygonLayer, sqlDialog;
 
 	function addGraphicToTextArea(e) {
 		var graphic = e.graphic, simpleGeometry, textArea;
-		textArea = dom.byId("textArea");
+		textArea = document.getElementById("textArea");
 		simpleGeometry = new SimpleGeometry(graphic.geometry);
 	}
 
@@ -184,7 +189,7 @@ require([
 		drawToolbar = new Draw(map);
 
 		// Setup the clear button to clear all graphics from the map and text from the text area.
-		on(dom.byId("clearButton"), "click", function () {
+		on(document.getElementById("clearButton"), "click", function () {
 			pointLayer.clear();
 			polylineLayer.clear();
 			polygonLayer.clear();
@@ -193,10 +198,10 @@ require([
 		});
 
 		// Setup the SQL button
-		on(dom.byId("toSqlButton"), "click", showSql);
+		on(document.getElementById("toSqlButton"), "click", showSql);
 
 		// Set the select box to activate or deactivate the draw toolbar depending on selection.
-		on(dom.byId("geometryTypeSelect"), "change", function () {
+		on(document.getElementById("geometryTypeSelect"), "change", function () {
 			// "this" is the select element.
 			// Change the "select a geometry" text to "Off", now that the user knows what to do.
 			this[0].text = "Off";
