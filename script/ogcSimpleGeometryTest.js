@@ -20,8 +20,8 @@ require([
 
 		var map, drawToolbar, pointLayer, polylineLayer, polygonLayer, sqlDialog;
 		
-		function addGraphicToTextArea(graphic) {
-			var simpleGeometry, textArea;
+		function addGraphicToTextArea(e) {
+			var graphic = e.graphic, simpleGeometry, textArea;
 			textArea = dom.byId("textArea");
 			simpleGeometry = new SimpleGeometry(graphic.geometry);
 		}
@@ -166,18 +166,19 @@ require([
 					layer = layers[i];
 					// layer.setInfoTemplate(infoTemplate);
 					map.addLayer(layer);
-					dojo.connect(layer, "onGraphicAdd", addGraphicToTextArea);
+					layer.on("graphic-add", addGraphicToTextArea);
 				}
 			}());
 			
 			map.on("load", function () {
 				
-				dojo.connect(map, "onExtentChange", function(extent) {
-					// Save the extent when the map's extent changes.
-					if (localStorage !== undefined) {
+				if (window.localStorage && window.JSON) {
+					map.on("extent-change", function (e) {
+						var extent = e.extent;
+						// Save the extent when the map's extent changes.
 						localStorage.setItem("extent", JSON.stringify(extent.toJson()));
-					}
-				});
+					});
+				}
 				
 				// Set up the draw toolbar.
 				drawToolbar = new Draw(map);
@@ -214,8 +215,8 @@ require([
 				});
 				
 				// Add a graphic to the map when the user has finished drawing a geometry.
-				dojo.connect(drawToolbar, "onDrawEnd", function(geometry) {
-					var graphic;
+				drawToolbar.on("draw-end", function(e) {
+					var geometry = e.geometry, graphic;
 					if (geometry) {
 						graphic = new Graphic(geometry);
 						if (geometry.type === "point" || geometry.type === "multipoint") {
