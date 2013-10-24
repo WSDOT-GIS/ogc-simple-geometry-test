@@ -1,43 +1,31 @@
 OGC Simple Geometry for ArcGIS JavaScript API
 =============================================
 
+This application is used to test the [WSDOT OGC Simple Geometry] library.
+
 This library adds support for conversion between [OGC Simple Geometry] and [ArcGIS Server API for Javascript geometry].
 
-## Usage ##
-See `index.html` for an example.
+## Getting started ##
 
-## Supported ##
+Clone the repository using this command: `git clone --recurse-submodules https://github.com/WSDOT-GIS/ogc-simple-geometry-test.git`
 
-* Well-Known Text definitions
+## Resources used ##
 
-### Geometry Types ###
-
-* POINT
-* MULTIPOINT
-* LINESTRING
-* MULTILINESTRING
-* POLYGON
-
-
-## Sample ##
-The sample application can be viewed at http://wsdot-gis.github.com/ogcsimplegeometry/.
+* [use.js] \(via [cdnjs]\)
+* [proj4js] \(via [cdnjs]\)
+* [WSDOT OGC Simple Geometry] \(submodule\)
+* [WSDOT ArcGIS JS Client Projection] \(submodule\)
 
 ## License ##
 Licensed under [The MIT License](http://opensource.org/licenses/MIT).
-
-## Files ##
-
-### `ogc/SimpleGeometry.js` ###
-This file defines the ogc.SimpleGeometry class.
-
-### `ogcSimpleGeometry.vsdoc.js` ###
-This file provides code completion for `ogcSimpleGeometry.js` in Visual Studio.  It does not actually provide any functionality and should not be referenced by HTML.
-
-### `ogcSimpleGeometryTest.js` ###
-This file is used by the `default.html` sample page, demonstrating how the ogc.SimpleGeomtry class can be used by an application.
 
 ## Acknowlegments ##
 * [CSS GitHub Ribbon](http://unindented.org/articles/2009/10/github-ribbon-using-css-transforms/)
 
 [ArcGIS Server API for Javascript geometry]:http://developers.arcgis.com/en/javascript/jsapi/geometry-amd.html
+[WSDOT OGC Simple Geometry]:https://github.com/WSDOT-GIS/ogcsimplegeometry
+[WSDOT ArcGIS JS Client Projection]:https://github.com/WSDOT-GIS/ArcGIS-JS-Client-Projection
 [OGC Simple Geometry]:http://www.opengeospatial.org/standards/sfa
+[use.js]:http://documentup.com/tbranyen/use.js
+[cdnjs]://cdnjs.com/
+[proj4js]:http://trac.osgeo.org/proj4js/
