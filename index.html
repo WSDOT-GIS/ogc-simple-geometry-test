@@ -7,30 +7,41 @@
 		<link rel="stylesheet" type="text/css" href="//js.arcgis.com/3.7compact/js/dojo/dijit/themes/claro/claro.css">
 		<link rel="stylesheet" href="style/default.css" />
 		<script>
-			var dojoConfig = {
-				async: true,
-				paths: {
-					"use": "//cdnjs.cloudflare.com/ajax/libs/use.js/0.2.0/use.min",
-					"proj4js": "//cdnjs.cloudflare.com/ajax/libs/proj4js/1.1.0/proj4js-compressed.min",
-					"defs": "/./script"
-				},
-				use: {
-					"proj4js": {
-						attach: "Proj4js"
-					}
-				},
-				packages: [
-					{
-						name: "ogc",
-						location: location.pathname.replace(/\/((?:[^\/]+\.html)?)$/, "/script/ogc")
+			var dojoConfig;
+
+			(function () {
+				/** Gets the full path to the URL. 
+				 * @returns {string}
+				 */
+				function getPath(/** {string} */ partialUrl) {
+					return location.pathname.replace(/\/((?:[^\/]+\.html)?)$/, partialUrl)
+				}
+
+				dojoConfig = {
+					async: true,
+					paths: {
+						"use": "//cdnjs.cloudflare.com/ajax/libs/use.js/0.2.0/use.min",
+						"proj4js": "//cdnjs.cloudflare.com/ajax/libs/proj4js/1.1.0/proj4js-compressed.min",
+						"defs": getPath("/script")
 					},
-					{
-						name: "client-projection",
-						location: "/./script/ArcGIS-JS-Client-Projection/Scripts",
-						main: "clientProjection.min"
-					}
-				]
-			};
+					use: {
+						"proj4js": {
+							attach: "Proj4js"
+						}
+					},
+					packages: [
+						{
+							name: "ogc",
+							location: getPath("/script/ogc")
+						},
+						{
+							name: "client-projection",
+							location: getPath("/script/ArcGIS-JS-Client-Projection/Scripts"),
+							main: "clientProjection.min"
+						}
+					]
+				};
+			}());
 		</script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/proj4js/1.1.0/proj4js-compressed.min.js"></script>
 		<script src="//js.arcgis.com/3.7compact/"></script>
