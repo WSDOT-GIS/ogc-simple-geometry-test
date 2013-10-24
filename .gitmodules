@@ -1,3 +1,6 @@
 [submodule "script/ogc"]
 	path = script/ogc
 	url = https://github.com/WSDOT-GIS/ogcsimplegeometry.git
+[submodule "script/ArcGIS-JS-Client-Projection"]
+	path = script/ArcGIS-JS-Client-Projection
+	url = https://github.com/WSDOT-GIS/ArcGIS-JS-Client-Projection.git

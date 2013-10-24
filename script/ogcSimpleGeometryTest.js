@@ -15,21 +15,26 @@ require([
 	"esri/symbols/SimpleLineSymbol",
 	"esri/symbols/SimpleFillSymbol",
 	"use!proj4js",
+	"client-projection",
 	"dojo/text!defs/EPSG/2927.txt",
-	"dojo/text!defs/EPSG/3857.txt"
+	"dojo/text!defs/EPSG/3857.txt",
+	"esri/geometry/jsonUtils"
 ], function (
 	on, SimpleGeometry, ogcAgs, Dialog, Map, Draw, Graphic, Extent, GraphicsLayer,
 	SimpleRenderer, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
-	Proj4js, epsg2927, epsg3857
+	Proj4js, clientProjection, epsg2927, epsg3857, jsonUtils
 ) {
 	"use strict";
 
 	var map, drawToolbar, pointLayer, polylineLayer, polygonLayer, sqlDialog;
 
-	function addGraphicToTextArea(e) {
-		var graphic = e.graphic, simpleGeometry, textArea;
-		textArea = document.getElementById("textArea");
-		simpleGeometry = new SimpleGeometry(graphic.geometry);
+	function handleOnGraphicAdd(e) {
+		var graphic = e.graphic, geometry;
+
+		if (graphic && graphic.geometry) {
+			geometry = graphic.geometry.getExtent();
+			map.setExtent(geometry);
+		}
 	}
 
 	/** Saves a graphic to the localStorage "graphics" item. 
@@ -139,6 +144,12 @@ require([
 		//return output;
 	}
 
+	// Set up the coordinate systems.
+	Proj4js.defs["EPSG:2927"] = epsg2927;
+	Proj4js.defs["EPSG:3857"] = epsg3857;
+
+	var mapsProj4jsProj = new Proj4js.Proj("EPSG:3857");
+
 	// Set up the map.
 	map = new Map("map", {
 		basemap: "gray",
@@ -171,7 +182,7 @@ require([
 			layer = layers[i];
 			// layer.setInfoTemplate(infoTemplate);
 			map.addLayer(layer);
-			layer.on("graphic-add", addGraphicToTextArea);
+			layer.on("graphic-add", handleOnGraphicAdd);
 		}
 	}());
 
@@ -241,7 +252,19 @@ require([
 
 		//Setup the OGC Simple Geometry entry text area and button.
 		document.getElementById("addOgcButton").onclick = function () {
-			var simpleGeometryText, simpleGeometry, esriGeometry, layer, graphic;
+			var simpleGeometryText, simpleGeometry, esriGeometry, layer, graphic, proj;
+
+			/** Gets the projection selected by the user, or null if it is the same as the map.
+			 * @returns {(Proj4js.Proj|null)}
+			 */
+			function getSelectedProjection() {
+				var id = document.getElementById("sridSelect").value;
+				if (id) {
+					id = new Proj4js.Proj(id);
+				}
+				return id || null;
+			}
+
 			simpleGeometryText = document.getElementById("ogcSimpleGeometryTextArea").value;
 
 			try {
@@ -251,7 +274,13 @@ require([
 				console.error(e);
 			}
 
-			////console.debug({ ogc: simpleGeometry, esri: esriGeometry });
+			// Get the projection
+			proj = getSelectedProjection();
+
+			if (proj) {
+				// project the esriGeometry.
+				esriGeometry = clientProjection.projectEsriGeometry(esriGeometry, proj, mapsProj4jsProj, jsonUtils.fromJson);
+			}
 
 			if (esriGeometry) {
 				if (esriGeometry.type === "point" || esriGeometry.type === "multipoint") {

@@ -23,6 +23,11 @@
 					{
 						name: "ogc",
 						location: location.pathname.replace(/\/((?:[^\/]+\.html)?)$/, "/script/ogc")
+					},
+					{
+						name: "client-projection",
+						location: "/./script/ArcGIS-JS-Client-Projection/Scripts",
+						main: "clientProjection.min"
 					}
 				]
 			};
@@ -32,56 +37,63 @@
 		
 		<script src="script/ogcSimpleGeometryTest.js"></script>
 	</head>
-	<body class="claro">
+<body class="claro">
 
-		
-		
-		<!-- The map control will be placed in this div. -->
-		<div id="map">
-			
-			<div id="tools">
-				<div id="toolbar">
-					<select id="geometryTypeSelect">
-						<option value="">Select a geometry type</option>
-						<optgroup label="Point">
-							<option value="point">point</option>
-							<option value="multipoint">multipoint</option>
-						</optgroup>
-						<optgroup label="Polyline">
-							<option value="line">line</option>
-							<option value="polyline">polyline</option>
-							<option value="freehandpolyline">freehand polyline</option>
-						</optgroup>
-						<optgroup label="Polygon">
-							<option value="polygon">polygon</option>
-							<option value="extent">extent</option>
-							<option value="freehandpolygon">freehand polygon</option>
-						</optgroup>
-						<optgroup label="Misc...">
-							<option value="rectangle">rectangle</option>
-							<option value="triangle">triangle</option>
-							<option value="ellipse">ellipse</option>
-							<option value="circle">circle</option>
-							<option value="arrow">arrow</option>
-							<option value="downarrow">down arrow</option>
-							<option value="leftarrow">left arrow</option>
-							<option value="rightarrow">right arrow</option>
-							<option value="uparrow">up arrow</option>
-						</optgroup>
-					</select>
-					<button id="clearButton" type="button" title="Clear all graphics from the map">Clear</button>
-					<button id="toSqlButton" type="button" title="Export graphics to SQL">SQL</button>
-				</div>
-				<div>
-					<textarea id="ogcSimpleGeometryTextArea" placeholder="Enter OGC Simple Geometry here"></textarea>
-					<button id="addOgcButton" type="button" title="Add OGC Simple Geometry">Add</button>
-				</div>
+
+
+	<!-- The map control will be placed in this div. -->
+	<div id="map">
+
+		<div id="tools">
+			<div id="toolbar">
+				<select id="geometryTypeSelect">
+					<option value="">Select a geometry type</option>
+					<optgroup label="Point">
+						<option value="point">point</option>
+						<option value="multipoint">multipoint</option>
+					</optgroup>
+					<optgroup label="Polyline">
+						<option value="line">line</option>
+						<option value="polyline">polyline</option>
+						<option value="freehandpolyline">freehand polyline</option>
+					</optgroup>
+					<optgroup label="Polygon">
+						<option value="polygon">polygon</option>
+						<option value="extent">extent</option>
+						<option value="freehandpolygon">freehand polygon</option>
+					</optgroup>
+					<optgroup label="Misc...">
+						<option value="rectangle">rectangle</option>
+						<option value="triangle">triangle</option>
+						<option value="ellipse">ellipse</option>
+						<option value="circle">circle</option>
+						<option value="arrow">arrow</option>
+						<option value="downarrow">down arrow</option>
+						<option value="leftarrow">left arrow</option>
+						<option value="rightarrow">right arrow</option>
+						<option value="uparrow">up arrow</option>
+					</optgroup>
+				</select>
+				<button id="clearButton" type="button" title="Clear all graphics from the map">Clear</button>
+				<button id="toSqlButton" type="button" title="Export graphics to SQL">SQL</button>
 			</div>
-			
-
+			<div>
+				<textarea id="ogcSimpleGeometryTextArea" placeholder="Enter OGC Simple Geometry here"></textarea>
+				<div>
+					<label for="sridSelect"><abbr title="Spatial Reference identifier">SRID</abbr></label>
+					<select id="sridSelect">
+						<option value="">Same as map (3857 / 102100)</option>
+						<option value="EPSG:2927">WA State Plane South (2927)</option>
+					</select>
+				</div>
+				<button id="addOgcButton" type="button" title="Add OGC Simple Geometry">Add</button>
+			</div>
 		</div>
-		<div class="ribbon"><a href="https://github.com/WSDOT-GIS/ogcsimplegeometry">Fork me on GitHub</a></div>
 
-		
-	</body>
+
+	</div>
+	<div class="ribbon"><a href="https://github.com/WSDOT-GIS/ogcsimplegeometry">Fork me on GitHub</a></div>
+
+
+</body>
 </html>
