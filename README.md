@@ -16,9 +16,6 @@ Clone the repository using this command: `git clone --recurse-submodules https:/
 * [WSDOT OGC Simple Geometry] \(submodule\)
 * [WSDOT ArcGIS JS Client Projection] \(submodule\)
 
-## License ##
-Licensed under [The MIT License](http://opensource.org/licenses/MIT).
-
 ## Acknowlegments ##
 * [CSS GitHub Ribbon](http://unindented.org/articles/2009/10/github-ribbon-using-css-transforms/)
 
